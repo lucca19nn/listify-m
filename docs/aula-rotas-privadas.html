@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula: Rotas Privadas com Expo Router</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 40px 20px;
+            padding-bottom: 100px;
+            scroll-snap-align: start;
+            background: white;
+            margin-bottom: 2px;
+            overflow-y: auto;
+        }
+
+        .slide:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        h1 {
+            font-size: clamp(2em, 5vw, 3.5em);
+            color: #667eea;
+            margin-bottom: 15px;
+            margin-top: 20px;
+            text-align: center;
+            animation: fadeInDown 1s;
+        }
+
+        h2 {
+            font-size: clamp(1.8em, 4vw, 2.5em);
+            color: #764ba2;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: clamp(1.3em, 3vw, 1.6em);
+            color: #667eea;
+            margin: 15px 0 10px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1em, 2.5vw, 1.4em);
+            color: #666;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .emoji {
+            font-size: clamp(3em, 8vw, 4em);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .content-box {
+            max-width: 95%;
+            width: 100%;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .slide:nth-child(even) .content-box {
+            background: white;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(0.75em, 1.5vw, 0.85em);
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .code-block .keyword {
+            color: #f92672;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .code-block .function {
+            color: #a6e22e;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 10px 0;
+            font-size: clamp(0.95em, 2vw, 1.1em);
+            line-height: 1.6;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h4 {
+            color: #667eea;
+            font-size: clamp(1.1em, 2.5vw, 1.3em);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: clamp(0.9em, 1.8vw, 1em);
+            line-height: 1.6;
+        }
+
+        .flow-diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 90%;
+            font-size: clamp(0.95em, 2vw, 1.1em);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .arrow {
+            font-size: clamp(1.5em, 3vw, 2em);
+            color: #667eea;
+            margin: 8px 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow-x: auto;
+            display: block;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: clamp(0.9em, 2vw, 1em);
+            min-width: 120px;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: clamp(0.85em, 1.8vw, 0.95em);
+            min-width: 120px;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .feature-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: clamp(0.9em, 2vw, 1em);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: clamp(0.85em, 2vw, 0.95em);
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: clamp(0.8em, 2vw, 0.9em);
+            z-index: 1000;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .icon-check {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .icon-x {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px 15px;
+                padding-bottom: 120px;
+            }
+
+            .content-box {
+                padding: 20px;
+                max-height: calc(100vh - 150px);
+            }
+
+            .navigation {
+                bottom: 10px;
+                right: 10px;
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                padding: 10px 15px;
+            }
+
+            .slide-number {
+                bottom: 10px;
+                left: 10px;
+                padding: 6px 12px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .emoji {
+                margin-bottom: 15px;
+            }
+
+            .code-block {
+                font-size: 0.7em;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                padding: 15px 10px;
+                padding-bottom: 140px;
+            }
+
+            .content-box {
+                padding: 15px;
+            }
+
+            .nav-btn {
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+        }
+
+        .important-note {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .important-note strong {
+            color: #856404;
+        }
+
+        .folder-structure {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            line-height: 1.6;
+            font-size: clamp(0.75em, 1.5vw, 0.85em);
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .folder-structure .folder {
+            color: #f92672;
+        }
+
+        .folder-structure .file {
+            color: #a6e22e;
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li::before {
+            content: "✨ ";
+            font-size: 1.2em;
+        }
+
+        /* Scroll suave para content-box */
+        .content-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-box::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .code-block::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container" id="slideContainer">
+
+        <!-- Slide 1: Título -->
+        <section class="slide">
+            <div class="emoji">🚀</div>
+            <h1>Rotas Privadas com Expo Router</h1>
+            <p class="subtitle">Uma jornada completa sobre autenticação e navegação em React Native</p>
+            <div class="feature-list">
+                <span class="feature-badge">🔐 Segurança</span>
+                <span class="feature-badge">📱 Mobile</span>
+                <span class="feature-badge">💾 Persistência</span>
+                <span class="feature-badge">⚡ Moderno</span>
+            </div>
+            <div
+                style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; max-width: 600px;">
+                <p style="font-size: clamp(0.9em, 2vw, 1.1em); color: #666; text-align: center;">
+                    💡 <strong>Navegue:</strong> Use as setas do teclado (↑ ↓) ou os botões na tela
+                </p>
+            </div>
+        </section>
+
+        <!-- Slide 2: O que vamos aprender -->
+        <section class="slide">
+            <h2>📚 O que vamos aprender hoje?</h2>
+            <div class="content-box">
+                <ul>
+                    <li>✅ O que são <strong>rotas privadas</strong> e por que são importantes</li>
+                    <li>✅ Como funciona o <strong>Expo Router</strong> (navegação moderna)</li>
+                    <li>✅ Como salvar dados com <strong>AsyncStorage</strong></li>
+                    <li>✅ Sistema completo de <strong>Login e Cadastro</strong></li>
+                    <li>✅ Proteção automática de <strong>áreas restritas</strong></li>
+                    <li>✅ Boas práticas de <strong>segurança</strong></li>
+                </ul>
+
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h3>🎯 Ao final desta aula você será capaz de:</h3>
+                    <ul style="font-size: clamp(0.9em, 2vw, 1em); line-height: 1.8;">
+                        <li>Criar um sistema de autenticação completo</li>
+                        <li>Proteger rotas do seu aplicativo</li>
+                        <li>Implementar login persistente (usuário continua logado)</li>
+                        <li>Trabalhar com navegação moderna (Expo Router)</li>
+                        <li>Aplicar boas práticas de segurança</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: O que são Rotas Privadas -->
+        <section class="slide">
+            <div class="emoji">🔒</div>
+            <h2>O que são Rotas Privadas?</h2>
+            <div class="content-box">
+                <div class="highlight-box">
+                    <h3>Conceito Simples:</h3>
+                    <p style="font-size: 1.2em; line-height: 1.8;">
+                        São <strong>telas ou páginas</strong> do seu app que só podem ser acessadas
+                        por usuários <strong>autenticados</strong> (logados).
+                    </p>
+                </div>
+
+                <h3>🌍 Exemplos do Dia a Dia:</h3>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>🏦 Banco</h4>
+                        <p>Você precisa fazer login para ver seu saldo e fazer transferências.</p>
+                    </div>
+                    <div class="card">
+                        <h4>📱 Instagram</h4>
+                        <p>Só quem tem conta pode postar fotos e ver o feed personalizado.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛒 E-commerce</h4>
+                        <p>Você vê produtos sem login, mas precisa de conta para comprar.</p>
+                    </div>
+                    <div class="card">
+                        <h4>📧 Email</h4>
+                        <p>Suas mensagens só aparecem após você fazer login.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Por que são importantes -->
+        <section class="slide">
+            <h2>🎯 Por que Rotas Privadas são Importantes?</h2>
+            <div class="content-box">
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="emoji" style="font-size: 3em;">🔐</div>
+                        <h4>1. Segurança</h4>
+                        <p>Protege dados sensíveis e informações pessoais dos usuários.</p>
+                    </div>
+                    <div class="card">
+                        <div class="emoji" style="font-size: 3em;">👤</div>
+                        <h4>2. Personalização</h4>
+                        <p>Cada usuário vê apenas suas próprias informações e configurações.</p>
+                    </div>
+                    <div class="card">
+                        <div class="emoji" style="font-size: 3em;">📊</div>
+                        <h4>3. Controle de Acesso</h4>
+                        <p>Define quem pode fazer o quê dentro do aplicativo.</p>
+                    </div>
+                    <div class="card">
+                        <div class="emoji" style="font-size: 3em;">✅</div>
+                        <h4>4. Experiência</h4>
+                        <p>Evita que usuários vejam telas que não podem usar sem login.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Estrutura do Projeto -->
+        <section class="slide">
+            <h2>📁 Estrutura do Projeto</h2>
+            <div class="content-box">
+                <div class="folder-structure">
+                    rotas-privadas-v2/
+                    ├── <span class="folder">app/</span> <span class="comment">← Todas as telas do app</span>
+                    │ ├── <span class="file">_layout.js</span> <span class="comment">← Layout raiz
+                        (AuthProvider)</span>
+                    │ ├── <span class="file">index.js</span> <span class="comment">← Página inicial</span>
+                    │ │
+                    │ ├── <span class="folder">(auth)/</span> <span class="comment">← Grupo de autenticação</span>
+                    │ │ ├── <span class="file">_layout.js</span> <span class="comment">← Layout de auth</span>
+                    │ │ ├── <span class="file">login.js</span> <span class="comment">← Tela de login</span>
+                    │ │ └── <span class="file">register.js</span> <span class="comment">← Tela de cadastro</span>
+                    │ │
+                    │ └── <span class="folder">(tabs)/</span> <span class="comment">← Grupo de abas (PRIVADO)</span>
+                    │ ├── <span class="file">_layout.js</span> <span class="comment">← Layout com tabs</span>
+                    │ ├── <span class="file">home.js</span> <span class="comment">← Tela home</span>
+                    │ └── <span class="file">profile.js</span> <span class="comment">← Tela perfil</span>
+                    │
+                    ├── <span class="folder">contexts/</span>
+                    │ └── <span class="file">AuthContext.js</span> <span class="comment">← Gerencia
+                        autenticação</span>
+                    │
+                    └── <span class="folder">utils/</span>
+                    └── <span class="file">storage.js</span> <span class="comment">← Funções do AsyncStorage</span>
+                </div>
+
+                <div class="important-note">
+                    <strong>💡 Importante:</strong> Pastas com parênteses <code>(auth)</code> e <code>(tabs)</code>
+                    são <strong>grupos de rotas</strong>. Os parênteses fazem parte do Expo Router!
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Expo Router -->
+        <section class="slide">
+            <h2>⚡ O que é Expo Router?</h2>
+            <div class="content-box">
+                <div class="highlight-box">
+                    <h3>Definição:</h3>
+                    <p style="font-size: 1.2em;">
+                        É um sistema de <strong>navegação baseado em arquivos</strong>.
+                        A estrutura de pastas vira automaticamente as rotas do app!
+                    </p>
+                </div>
+
+                <h3>🆚 Comparação com React Navigation:</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>React Navigation</th>
+                            <th>Expo Router</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Configuração</strong></td>
+                            <td>Manual (muito código)</td>
+                            <td>Automática (pastas)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rotas</strong></td>
+                            <td>Definidas em JS</td>
+                            <td>Estrutura de pastas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aprendizado</strong></td>
+                            <td>Mais complexo</td>
+                            <td>Mais intuitivo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manutenção</strong></td>
+                            <td>Trabalhosa</td>
+                            <td>Mais fácil</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Boa</td>
+                            <td>Ótima</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Slide 7: Como funciona o roteamento -->
+        <section class="slide">
+            <h2>🗺️ Como Funciona o Roteamento?</h2>
+            <div class="content-box">
+                <h3>Mapeamento Automático:</h3>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>📄 Arquivo</h4>
+                        <code style="color: #667eea;">app/(auth)/login.js</code>
+                    </div>
+                    <div class="card">
+                        <h4>🔗 Rota Gerada</h4>
+                        <code style="color: #764ba2;">/(auth)/login</code>
+                    </div>
+                    <div class="card">
+                        <h4>📄 Arquivo</h4>
+                        <code style="color: #667eea;">app/(tabs)/home.js</code>
+                    </div>
+                    <div class="card">
+                        <h4>🔗 Rota Gerada</h4>
+                        <code style="color: #764ba2;">/(tabs)/home</code>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Vantagem Principal:</h3>
+                    <p style="font-size: 1.2em;">
+                        Você <strong>NÃO precisa</strong> configurar rotas manualmente.
+                        Basta criar o arquivo na pasta certa!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: AsyncStorage -->
+        <section class="slide">
+            <div class="emoji">💾</div>
+            <h2>AsyncStorage: Salvando Dados</h2>
+            <div class="content-box">
+                <div class="highlight-box">
+                    <h3>O que é?</h3>
+                    <p style="font-size: 1.2em;">
+                        É um <strong>banco de dados local</strong> simples que salva informações
+                        no dispositivo do usuário, mesmo após fechar o app.
+                    </p>
+                </div>
+
+                <h3>🎯 Analogia Simples:</h3>
+                <p style="font-size: 1.15em; line-height: 1.8;">
+                    Imagine uma <strong>gaveta secreta</strong> no celular do usuário onde você pode
+                    guardar informações como: "quem está logado", "preferências do usuário", etc.
+                </p>
+
+                <h3>📦 O que salvamos no projeto:</h3>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>👤 Usuário Logado</h4>
+                        <p>Nome, email, ID do usuário atual</p>
+                    </div>
+                    <div class="card">
+                        <h4>👥 Banco de Usuários</h4>
+                        <p>Lista de todos os usuários cadastrados</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Funções do Storage -->
+        <section class="slide">
+            <h2>🛠️ Funções do Storage</h2>
+            <div class="content-box">
+                <h3>Principais Funções em <code>utils/storage.js</code>:</h3>
+
+                <div class="card" style="margin: 20px 0;">
+                    <h4>1️⃣ saveUser(user)</h4>
+                    <p>Salva o usuário que acabou de fazer login</p>
+                    <div class="code-block">
+                        <span class="keyword">await</span> <span class="function">saveUser</span>({
+                        <span class="string">id</span>: <span class="string">'123'</span>,
+                        <span class="string">name</span>: <span class="string">'João'</span>,
+                        <span class="string">email</span>: <span class="string">'joao@email.com'</span>
+                        });
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <h4>2️⃣ getUser()</h4>
+                    <p>Recupera o usuário logado (usado ao abrir o app)</p>
+                    <div class="code-block">
+                        <span class="keyword">const</span> user = <span class="keyword">await</span> <span
+                            class="function">getUser</span>();
+                        <span class="comment">// Retorna: { id: '123', name: 'João', email: 'joao@email.com'
+                            }</span>
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <h4>3️⃣ removeUser()</h4>
+                    <p>Remove o usuário (faz logout)</p>
+                    <div class="code-block">
+                        <span class="keyword">await</span> <span class="function">removeUser</span>();
+                        <span class="comment">// Usuário deslogado!</span>
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <h4>4️⃣ saveNewUser(user)</h4>
+                    <p>Cadastra um novo usuário no banco</p>
+                    <div class="code-block">
+                        <span class="keyword">const</span> result = <span class="keyword">await</span> <span
+                            class="function">saveNewUser</span>({
+                        <span class="string">name</span>: <span class="string">'Maria'</span>,
+                        <span class="string">email</span>: <span class="string">'maria@email.com'</span>,
+                        <span class="string">password</span>: <span class="string">'123456'</span>
+                        });
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <h4>5️⃣ validateLogin(email, password)</h4>
+                    <p>Valida se email e senha estão corretos</p>
+                    <div class="code-block">
+                        <span class="keyword">const</span> result = <span class="keyword">await</span> <span
+                            class="function">validateLogin</span>(
+                        <span class="string">'joao@email.com'</span>,
+                        <span class="string">'123456'</span>
+                        );
+                        <span class="comment">// Retorna: { success: true, user: {...} }</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 10: AuthContext -->
+        <section class="slide">
+            <div class="emoji">🎯</div>
+            <h2>AuthContext: O Cérebro da Autenticação</h2>
+            <div class="content-box">
+                <div class="highlight-box">
+                    <h3>O que é Context?</h3>
+                    <p style="font-size: 1.2em;">
+                        É uma forma de <strong>compartilhar dados</strong> entre todas as telas do app
+                        sem precisar passar props manualmente.
+                    </p>
+                </div>
+
+                <h3>🧠 O que o AuthContext faz?</h3>
+                <ol style="font-size: 1.15em; line-height: 2;">
+                    <li><strong>Gerencia o estado do usuário</strong> (logado ou não)</li>
+                    <li><strong>Protege rotas automaticamente</strong></li>
+                    <li><strong>Redireciona</strong> para login ou home conforme necessário</li>
+                    <li><strong>Fornece funções</strong>: signIn, signUp, signOut</li>
+                </ol>
+
+                <div class="important-note">
+                    <strong>🔑 Importante:</strong> O AuthContext fica no <code>app/_layout.js</code>,
+                    envolvendo todo o app. Assim, qualquer tela pode acessar os dados do usuário!
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 11: Fluxo de Autenticação -->
+        <section class="slide">
+            <h2>🔄 Fluxo Completo de Autenticação</h2>
+            <div class="content-box">
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        1️⃣ App Inicia
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        2️⃣ AuthContext carrega dados do AsyncStorage
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        3️⃣ Verifica: Tem usuário salvo?
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px; margin: 0 auto;">
+                        <div>
+                            <div class="flow-step"
+                                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                                ✅ SIM<br>Redireciona para<br>(tabs)/home
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flow-step"
+                                style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);">
+                                ❌ NÃO<br>Redireciona para<br>(auth)/login
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 12: Proteção de Rotas -->
+        <section class="slide">
+            <h2>🛡️ Como Funciona a Proteção de Rotas?</h2>
+            <div class="content-box">
+                <h3>Código do AuthContext:</h3>
+                <div class="code-block">
+                    <span class="comment">// Dentro do AuthContext.js</span>
+                    <span class="keyword">useEffect</span>(() => {
+                    <span class="keyword">if</span> (isLoading) <span class="keyword">return</span>; <span
+                        class="comment">// Aguarda carregar</span>
+
+                    <span class="keyword">const</span> inAuthGroup = segments[<span class="string">0</span>] ===
+                    <span class="string">'(auth)'</span>;
+
+                    <span class="keyword">if</span> (!user && !inAuthGroup) {
+                    <span class="comment">// Usuário NÃO logado tentando acessar área privada</span>
+                    router.<span class="function">replace</span>(<span class="string">'/(auth)/login'</span>);
+                    }
+                    <span class="keyword">else if</span> (user && inAuthGroup) {
+                    <span class="comment">// Usuário JÁ logado tentando acessar login/cadastro</span>
+                    router.<span class="function">replace</span>(<span class="string">'/(tabs)/home'</span>);
+                    }
+                    }, [user, segments, isLoading]);
+                </div>
+
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 O que isso significa?</h3>
+                    <ul style="font-size: 1.15em; line-height: 2;">
+                        <li>Se você <strong>não está logado</strong> e tenta acessar <code>/home</code> → vai para
+                            <code>/login</code>
+                        </li>
+                        <li>Se você <strong>já está logado</strong> e tenta acessar <code>/login</code> → vai para
+                            <code>/home</code>
+                        </li>
+                        <li>Tudo <strong>automático</strong>, sem código extra nas telas!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 13: Resumo Final -->
+        <section class="slide">
+            <div class="emoji">🎓</div>
+            <h2>Resumo: Pontos-Chave</h2>
+            <div class="content-box">
+                <div class="key-points">
+                    <h3>✨ Principais Aprendizados:</h3>
+                    <ul style="font-size: 1.15em; line-height: 2.2;">
+                        <li><strong>Rotas Privadas</strong> protegem áreas sensíveis do app</li>
+                        <li><strong>Expo Router</strong> simplifica navegação com estrutura de pastas</li>
+                        <li><strong>AsyncStorage</strong> salva dados localmente no dispositivo</li>
+                        <li><strong>AuthContext</strong> gerencia autenticação globalmente</li>
+                        <li><strong>Proteção automática</strong> redireciona usuários conforme estado</li>
+                        <li><strong>Validações</strong> garantem dados corretos no cadastro</li>
+                        <li><strong>Persistência</strong> mantém login após fechar o app</li>
+                        <li><strong>Tabs</strong> permitem navegação intuitiva entre telas</li>
+                    </ul>
+                </div>
+
+                <div class="important-note" style="margin-top: 30px;">
+                    <strong>🎯 Lembre-se:</strong> Este é um projeto <strong>educacional</strong>.
+                    Em produção, sempre use backend, criptografia e boas práticas de segurança!
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 14: Encerramento -->
+        <section class="slide">
+            <div class="emoji">🎉</div>
+            <h1>Parabéns!</h1>
+            <p class="subtitle">Você concluiu a aula sobre Rotas Privadas</p>
+            <div class="content-box">
+                <h3 style="text-align: center; margin-bottom: 30px;">🚀 Próximos Passos:</h3>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>1️⃣ Pratique</h4>
+                        <p>Clone o projeto e experimente fazer modificações</p>
+                    </div>
+                    <div class="card">
+                        <h4>2️⃣ Expanda</h4>
+                        <p>Adicione novas funcionalidades sugeridas</p>
+                    </div>
+                    <div class="card">
+                        <h4>3️⃣ Estude</h4>
+                        <p>Explore a documentação oficial</p>
+                    </div>
+                    <div class="card">
+                        <h4>4️⃣ Crie</h4>
+                        <p>Desenvolva seu próprio projeto com rotas privadas</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; font-size: 1.3em; color: #667eea;">
+                    <strong>Continue aprendendo e codando! 💻✨</strong>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Navegação e Contador de Slides -->
+    <div class="slide-number" id="slideNumber">Slide 1 / 14</div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">⬅️ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Próximo ➡️</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const slideNumber = document.getElementById('slideNumber');
+        const container = document.getElementById('slideContainer');
+
+        function updateSlideNumber() {
+            slideNumber.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                updateSlideNumber();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                updateSlideNumber();
+            }
+        }
+
+        // Detectar scroll para atualizar número do slide
+        let scrollTimeout;
+        container.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const scrollPosition = container.scrollTop;
+                const slideHeight = window.innerHeight;
+                const newSlide = Math.round(scrollPosition / slideHeight);
+                if (newSlide !== currentSlide && newSlide < totalSlides) {
+                    currentSlide = newSlide;
+                    updateSlideNumber();
+                }
+            }, 100);
+        });
+
+        // Navegação por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                previousSlide();
+            }
+        });
+
+        // Inicializar
+        updateSlideNumber();
+    </script>
+</body>
+
+</html>
