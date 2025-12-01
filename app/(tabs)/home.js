@@ -1,44 +1,65 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useAuth } from "../../contexts/AuthContext";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+
+const CATEGORIES = [
+  { name: "Alimentos", icon: "🍎", color: "#E8F5E9" }, 
+  { name: "Eletrodomésticos", icon: "🧊", color: "#E8F5E9" }, 
+];
+
+const CategoryItem = ({ name, icon, color }) => (
+  <TouchableOpacity style={styles.squareCardContainer}>
+    <Text style={styles.squareCardIcon}>{icon}</Text>
+    <Text style={styles.squareCardText}>{name}</Text>
+  </TouchableOpacity>
+);
 
 export default function HomeScreen() {
-  const { user } = useAuth();
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.emoji}>👋</Text>
-        <Text style={styles.title}>Bem-vindo(a)!</Text>
-        <Text style={styles.userName}>{user?.name}</Text>
+        <Text style={styles.greetingTitle}>Olá!</Text>
+        <Text style={styles.greetingSubtitle}>Como está seu dia?</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>✅ Você está autenticado!</Text>
-          <Text style={styles.cardText}>
-            Esta é uma rota privada protegida pelo Expo Router. Você só consegue
-            acessar esta tela porque fez login com sucesso.
-          </Text>
+        <View style={styles.chatArea}>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.input}
+              placeholder="O que tá rolando?..."
+              placeholderTextColor="#f0f0f0"
+            />
+            <TouchableOpacity style={styles.sendButton}>
+              <Text style={styles.sendIcon}>ᐳ</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.userBubble}>
+            <Text style={styles.userBubbleText}>Hoje eu estava muito cansada! 😩</Text>
+          </View>
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>🎯 Recursos Implementados:</Text>
-          <Text style={styles.infoItem}>✓ Expo Router (navegação moderna)</Text>
-          <Text style={styles.infoItem}>
-            ✓ AsyncStorage (persistência de dados)
-          </Text>
-          <Text style={styles.infoItem}>✓ Rotas privadas automáticas</Text>
-          <Text style={styles.infoItem}>✓ Cadastro de usuários</Text>
-          <Text style={styles.infoItem}>✓ Login persistente</Text>
-          <Text style={styles.infoItem}>✓ Validação de dados</Text>
+        <View style={styles.featuredImageArea}>
+          <Text style={styles.imagePlaceholder}>🖼️</Text>
         </View>
 
-        <View style={styles.tipCard}>
-          <Text style={styles.tipTitle}>💡 Dica:</Text>
-          <Text style={styles.tipText}>
-            Seus dados ficam salvos mesmo se você fechar o app! Use o botão
-            "Sair" no perfil para fazer logout.
-          </Text>
+        <Text style={styles.categoriesTitle}>Categorias</Text>
+        
+        <View style={styles.categoriesGrid}>
+          {CATEGORIES.map((item, index) => (
+            <CategoryItem 
+              key={index} 
+              name={item.name} 
+              icon={item.icon} 
+              color={item.color} 
+            />
+          ))}
         </View>
+
       </View>
     </ScrollView>
   );
@@ -47,94 +68,120 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
-    padding: 20,
-    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
-  emoji: {
-    fontSize: 80,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 32,
+  
+  greetingTitle: {
+    fontSize: 28,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 10,
-    textAlign: "center",
   },
-  userName: {
-    fontSize: 24,
-    color: "#007AFF",
-    fontWeight: "600",
-    marginBottom: 30,
-    textAlign: "center",
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
+  greetingSubtitle: {
+    fontSize: 18,
+    color: "#666",
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#ddd",
+  },
+
+  chatArea: {
+    marginBottom: 30,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    backgroundColor: "#F28C8C", 
+    borderRadius: 24,
+    paddingHorizontal: 15,
+    marginRight: 10,
+    fontSize: 16,
+    color: "#fff",
+  },
+  sendButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: "#F28C8C", 
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sendIcon: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    transform: [{ rotate: '-45deg' }],
+  },
+  userBubble: {
+    alignSelf: "flex-start",
+    backgroundColor: "#FCE4EC", 
+    borderRadius: 20,
+    borderTopLeftRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginTop: 5,
+    maxWidth: "80%",
+  },
+  userBubbleText: {
+    fontSize: 14,
+    color: "#333",
+  },
+
+  featuredImageArea: {
+    width: "100%",
+    height: 180,
+    backgroundColor: "#f0f0f0", 
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  imagePlaceholder: {
+    fontSize: 50,
+    color: "#999",
+  },
+
+  categoriesTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 15,
+  },
+  categoriesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between", 
+  },
+  squareCardContainer: {
+    width: "48%", 
+    height: 120, 
+    alignItems: "center",
+    justifyContent: 'center',
+    backgroundColor: "#E8F5E9", 
+    borderRadius: 15,
+    padding: 10,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+  squareCardIcon: {
+    fontSize: 40,
+    marginBottom: 5,
+  },
+  squareCardText: {
+    fontSize: 14,
+    fontWeight: "600",
     color: "#333",
-    marginBottom: 10,
     textAlign: "center",
-  },
-  cardText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  infoCard: {
-    backgroundColor: "#E3F2FD",
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#90CAF9",
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#1976D2",
-    marginBottom: 15,
-  },
-  infoItem: {
-    fontSize: 14,
-    color: "#1565C0",
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  tipCard: {
-    backgroundColor: "#FFF3E0",
-    borderRadius: 12,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "#FFB74D",
-  },
-  tipTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#F57C00",
-    marginBottom: 10,
-  },
-  tipText: {
-    fontSize: 14,
-    color: "#E65100",
-    lineHeight: 20,
   },
 });
