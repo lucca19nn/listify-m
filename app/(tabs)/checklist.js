@@ -10,6 +10,7 @@ import {
     Image,
     Dimensions,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; 
 
 export default function ChecklistScreen() {
     const [search, setSearch] = useState("");
@@ -36,12 +37,16 @@ export default function ChecklistScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>CheckList</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Pesquisar produto..."
-                value={search}
-                onChangeText={setSearch}
-            />
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Pesquisar produto..."
+                    value={search}
+                    onChangeText={setSearch}
+                    placeholderTextColor="#F7BCBF"
+                />
+                <Ionicons name="search" size={20} color="white" style={styles.searchIconInsideRight} />
+            </View>
             <ScrollView style={styles.list}>
                 {filteredItems.length === 0 ? (
                     <Text style={styles.empty}>Nenhum item adicionado.</Text>
@@ -67,29 +72,44 @@ export default function ChecklistScreen() {
 
 const screenWidth = Dimensions.get("window").width;
 const horizontalPadding = 20;
-const inputHeight = 44;
+
 
 const styles = StyleSheet.create({
-    container: 
-    { 
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    flex: 1, 
-    padding: 16, 
-},
-    title: 
-    { 
-    fontSize: 22, 
-    fontWeight: "bold", 
-    marginBottom: 12 
-},
-    input: {
+    container: { 
+        paddingHorizontal: 20,
+        paddingTop: 70,
+        flex: 1, 
+        padding: 16, 
+    },
+    title: { 
+        fontSize: 22, 
+        fontWeight: "bold", 
+        marginBottom: 12 
+    },
+    inputContainer: {
+        position: "relative",
         backgroundColor: "#F06A6E",
-        color: "white",
-        width: "3rem",
         borderRadius: 20,
         marginBottom: 16,
+        width: screenWidth - horizontalPadding * 2,
+        height: 50,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    input: {
+        flex: 1,
+        color: "white",
         fontSize: 16,
+        paddingRight: 40, 
+        paddingLeft: 16,
+        paddingVertical: 8,
+    },
+    searchIconInsideRight: {
+        position: "absolute",
+        right: 16, 
+        top: "50%",
+        transform: [{ translateY: -10 }],
     },
     list: { flex: 1 },
     card: {
