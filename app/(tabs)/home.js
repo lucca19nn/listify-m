@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const CATEGORIES = [
   { name: "Alimentos", icon: "🍎", color: "#E8F5E9" }, 
@@ -21,6 +24,20 @@ const CategoryItem = ({ name, icon, color }) => (
 );
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  // Redireciona para a tela de citação se o usuário não a visitou antes - NÃO APAGAR FUNCIONALIDADE
+  useEffect(() => {
+    const checkVisitedQuote = async () => {
+      const hasVisitedQuote = await AsyncStorage.getItem("hasVisitedQuote");
+      if (!hasVisitedQuote) {
+        router.replace("/(stack)/quote"); 
+      }
+    };
+
+    checkVisitedQuote();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>

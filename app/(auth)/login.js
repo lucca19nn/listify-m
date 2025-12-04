@@ -11,25 +11,28 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router"; // Adicionei o useRouter
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const router = useRouter(); // Inicializei o roteador
 
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
-
+  
     setLoading(true);
     try {
       const result = await signIn(email, password);
-
-      if (!result.success) {
+  
+      if (result.success) {
+        router.push("/(stack)/quote"); // Caminho corrigido para a página quote
+      } else {
         Alert.alert("Erro", result.message || "Falha ao fazer login");
       }
     } catch (error) {
