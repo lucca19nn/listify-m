@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 
 export default function TabsLayout() {
   return (
@@ -7,26 +8,72 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#fff",
-          borderTopWidth: 1,
-          borderTopColor: "#e0e0e0",
+          position: "absolute",
+          left: 16,
+          right: 16,
+          bottom: Platform.OS === "ios" ? 24 : 12,
+          height: 72,
+          borderRadius: 36,
+          backgroundColor: "#F5F6F6",
+          borderTopWidth: 0,
+          shadowColor: "#000",
+          shadowOpacity: 0.08,
+          shadowOffset: { width: 0, height: 8 },
+          shadowRadius: 16,
+          elevation: 16,
+          paddingTop: 14,             
+          paddingBottom: 0,          
         },
-        tabBarActiveTintColor: "#007AFF",
+        tabBarItemStyle: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        tabBarIconStyle: {
+          alignSelf: "center",         // Força centralização
+        },
+        tabBarActiveTintColor: "#476250",
         tabBarInactiveTintColor: "#888",
+        tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="home-variant"
+              size={30}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="checklist"
+        options={{
+          title: "Checklist",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="clipboard-list"
+              size={30}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "Perfil",
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>👤</Text>,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="account-circle"
+              size={30}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>
