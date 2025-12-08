@@ -30,7 +30,7 @@ export default function TabsLayout() {
           alignItems: "center",
         },
         tabBarIconStyle: {
-          alignSelf: "center",         // Força centralização
+          alignSelf: "center",    
         },
         tabBarActiveTintColor: "#476250",
         tabBarInactiveTintColor: "#888",
@@ -57,6 +57,18 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="clipboard-list"
+              size={30}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="pesquisa"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="magnify"
               size={30}
               color={color}
             />

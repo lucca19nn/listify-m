@@ -6,9 +6,6 @@ export default function StackLayout() {
             screenOptions={{
                 headerShown: false,
             }}
-        >
-            <Stack.Screen name="quote" />
-            <Stack.Screen name="home" />
-        </Stack>
+        />
     );
 }

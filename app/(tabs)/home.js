@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,40 +6,97 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Image,
+  Dimensions,
+  FlatList,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const { width } = Dimensions.get("window");
 
-const CATEGORIES = [
-  { name: "Alimentos", icon: "🍎", color: "#E8F5E9" }, 
-  { name: "Eletrodomésticos", icon: "🧊", color: "#E8F5E9" }, 
+const IMAGES = [
+  { uri: "https://deportesaludable.com/wp-content/uploads/2018/12/alimentos-saludables.jpg" },
+  { uri: "https://blog.novalar.com.br/wp-content/uploads/2022/04/Principais-eletrodomesticos.jpg" },
+  { uri: "https://media.gazetadopovo.com.br/2021/08/24165607/meio01_shutterstock_1042252666-1-660x372.jpg" },
+  { uri: "https://medlimp.com.br/wp-content/uploads/2021/07/produtos-de-limpeza-profissional.jpg" },
 ];
 
-const CategoryItem = ({ name, icon, color }) => (
-  <TouchableOpacity style={styles.squareCardContainer}>
-    <Text style={styles.squareCardIcon}>{icon}</Text>
-    <Text style={styles.squareCardText}>{name}</Text>
-  </TouchableOpacity>
-);
+const CATEGORIES = [
+  {
+    name: "Alimentos",
+    icon: "🍎",
+    color: "#E8F5E9",
+    route: "/listAlimentos",
+  },
+  {
+    name: "Eletrodomésticos",
+    icon: "🧊",
+    color: "#E8F5E9",
+    route: "/listEletro",
+  },
+  {
+    name: "Produtos de Limpeza",
+    icon: "🧼",
+    color: "#E8F5E9",
+    route: "/listProdutos",
+  },
+  {
+    name: "Utensílios",
+    icon: "🍴",
+    color: "#E8F5E9",
+    route: "/listUtensilios",
+  },
+];
+const CategoryItem = ({ name, icon, route }) => {
+  const router = useRouter();
+
+  return (
+    <TouchableOpacity
+      style={styles.squareCardContainer}
+      onPress={() => router.push(route)}
+    >
+      <Text style={styles.squareCardIcon}>{icon}</Text>
+      <Text style={styles.squareCardText}>{name}</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollViewRef = useRef(null);
 
-  // Redireciona para a tela de citação se o usuário não a visitou antes - NÃO APAGAR FUNCIONALIDADE
   useEffect(() => {
     const checkVisitedQuote = async () => {
       const hasVisitedQuote = await AsyncStorage.getItem("hasVisitedQuote");
       if (!hasVisitedQuote) {
-        router.replace("/(stack)/quote"); 
+        router.replace("/(stack)/quote");
       }
     };
 
     checkVisitedQuote();
   }, []);
 
+  useEffect(() => {
+    if (!scrollViewRef.current) return;
+
+    const interval = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % IMAGES.length;
+
+      scrollViewRef.current.scrollToIndex({
+        index: nextIndex,
+        animated: true,
+      });
+
+      setActiveIndex(nextIndex);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [activeIndex]);
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}  contentContainerStyle={{ paddingBottom: 120 }}>
       <View style={styles.content}>
         <Text style={styles.greetingTitle}>Olá!</Text>
         <Text style={styles.greetingSubtitle}>Como está seu dia?</Text>
@@ -55,28 +112,66 @@ export default function HomeScreen() {
               <Text style={styles.sendIcon}>ᐳ</Text>
             </TouchableOpacity>
           </View>
+
           <View style={styles.userBubble}>
-            <Text style={styles.userBubbleText}>Hoje eu estava muito cansada! 😩</Text>
+            <Text style={styles.userBubbleText}>
+              Hoje eu estava muito cansada! 😩
+            </Text>
           </View>
         </View>
 
         <View style={styles.featuredImageArea}>
-          <Text style={styles.imagePlaceholder}>🖼️</Text>
+          <FlatList
+            ref={scrollViewRef}
+            data={IMAGES}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, index) => index.toString()}
+            getItemLayout={(_, index) => ({
+              length: width - 40,
+              offset: (width - 40) * index,
+              index,
+            })}
+            onMomentumScrollEnd={(e) => {
+              const index = Math.round(
+                e.nativeEvent.contentOffset.x / (width - 40)
+              );
+              setActiveIndex(index);
+            }}
+            renderItem={({ item }) => (
+              <Image
+                source={item}
+                style={{
+                  width: width - 40,
+                  height: 180,
+                  borderRadius: 10,
+                }}
+                resizeMode="cover"
+              />
+            )}
+          />
+
+          <View style={styles.dotsContainer}>
+            {IMAGES.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  index === activeIndex && styles.dotActive,
+                ]}
+              />
+            ))}
+          </View>
         </View>
 
         <Text style={styles.categoriesTitle}>Categorias</Text>
-        
+
         <View style={styles.categoriesGrid}>
           {CATEGORIES.map((item, index) => (
-            <CategoryItem 
-              key={index} 
-              name={item.name} 
-              icon={item.icon} 
-              color={item.color} 
-            />
+            <CategoryItem key={index} {...item} />
           ))}
         </View>
-
       </View>
     </ScrollView>
   );
@@ -88,11 +183,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   content: {
-    flex: 1,
     paddingHorizontal: 20,
     paddingTop: 50,
   },
-  
+
   greetingTitle: {
     fontSize: 28,
     fontWeight: "bold",
@@ -115,7 +209,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 48,
-    backgroundColor: "#F28C8C", 
+    backgroundColor: "#F28C8C",
     borderRadius: 24,
     paddingHorizontal: 15,
     marginRight: 10,
@@ -125,7 +219,7 @@ const styles = StyleSheet.create({
   sendButton: {
     width: 48,
     height: 48,
-    backgroundColor: "#F28C8C", 
+    backgroundColor: "#F28C8C",
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
@@ -134,16 +228,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 24,
     fontWeight: "bold",
-    transform: [{ rotate: '-45deg' }],
+    transform: [{ rotate: "-45deg" }],
   },
+
   userBubble: {
-    alignSelf: "flex-start",
-    backgroundColor: "#FCE4EC", 
+    backgroundColor: "#FCE4EC",
     borderRadius: 20,
     borderTopLeftRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    marginTop: 5,
     maxWidth: "80%",
   },
   userBubbleText: {
@@ -152,43 +245,49 @@ const styles = StyleSheet.create({
   },
 
   featuredImageArea: {
-    width: "100%",
     height: 180,
-    backgroundColor: "#f0f0f0", 
     borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
     marginBottom: 30,
+    overflow: "hidden",
   },
-  imagePlaceholder: {
-    fontSize: 50,
-    color: "#999",
+
+  dotsContainer: {
+    position: "absolute",
+    bottom: 10,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#aaa",
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    backgroundColor: "#333",
   },
 
   categoriesTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 15,
+    color: "#333",
   },
   categoriesGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
   },
   squareCardContainer: {
-    width: "48%", 
-    height: 120, 
-    alignItems: "center",
-    justifyContent: 'center',
-    backgroundColor: "#E8F5E9", 
+    width: "48%",
+    height: 120,
+    backgroundColor: "#E8F5E9",
     borderRadius: 15,
-    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
     elevation: 3,
   },
   squareCardIcon: {
@@ -198,7 +297,5 @@ const styles = StyleSheet.create({
   squareCardText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
-    textAlign: "center",
   },
 });
