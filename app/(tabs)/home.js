@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  FlatList,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,47 +16,62 @@ const { width } = Dimensions.get("window");
 
 const IMAGES = [
   { uri: "https://deportesaludable.com/wp-content/uploads/2018/12/alimentos-saludables.jpg" },
-  { uri: "https://blog.novalar.com.br/wp-content/uploads/2022/04/Principais-eletrodomesticos.jpg" },
+  { uri: "https://blog.novolar.com.br/wp-content/uploads/2022/04/Principais-eletrodomesticos.jpg" },
   { uri: "https://media.gazetadopovo.com.br/2021/08/24165607/meio01_shutterstock_1042252666-1-660x372.jpg" },
   { uri: "https://medlimp.com.br/wp-content/uploads/2021/07/produtos-de-limpeza-profissional.jpg" },
 ];
 
 const CATEGORIES = [
   {
-    name: "Alimentos",
+    name: "Frutas",
     icon: "🍎",
-    color: "#E8F5E9",
+    color: "#C8E6C9",
     route: "/listAlimentos",
   },
   {
-    name: "Eletrodomésticos",
-    icon: "🧊",
-    color: "#E8F5E9",
-    route: "/listEletro",
+    name: "Utensílios de cozinha",
+    icon: "🍴",
+    color: "#C8E6C9",
+    route: "/listUtensilios",
   },
   {
-    name: "Produtos de Limpeza",
-    icon: "🧼",
-    color: "#E8F5E9",
+    name: "Maquiagem",
+    icon: "💄",
+    color: "#C8E6C9",
     route: "/listProdutos",
   },
   {
-    name: "Utensílios",
-    icon: "🍴",
-    color: "#E8F5E9",
-    route: "/listUtensilios",
+    name: "Perfumes",
+    icon: "🧴",
+    color: "#C8E6C9",
+    route: "/listPerfumes",
+  },
+  {
+    name: "Mercado",
+    icon: "🛒",
+    color: "#C8E6C9",
+    route: "/listProdutos",
+  },
+  {
+    name: "Produtos de limpeza",
+    icon: "🧼",
+    color: "#C8E6C9",
+    route: "/listProdutos",
   },
 ];
-const CategoryItem = ({ name, icon, route }) => {
+
+
+const CategoryItem = ({ name, icon, route, color }) => {
   const router = useRouter();
 
   return (
     <TouchableOpacity
-      style={styles.squareCardContainer}
+      style={[styles.categoryCard, { backgroundColor: color }]}
       onPress={() => router.push(route)}
+      activeOpacity={0.8}
     >
-      <Text style={styles.squareCardIcon}>{icon}</Text>
-      <Text style={styles.squareCardText}>{name}</Text>
+      <Text style={styles.categoryIcon}>{icon}</Text>
+      <Text style={styles.categoryName}>{name}</Text>
     </TouchableOpacity>
   );
 };
@@ -65,6 +79,7 @@ const CategoryItem = ({ name, icon, route }) => {
 export default function HomeScreen() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [searchText, setSearchText] = useState("");
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -78,99 +93,69 @@ export default function HomeScreen() {
     checkVisitedQuote();
   }, []);
 
-  useEffect(() => {
-    if (!scrollViewRef.current) return;
 
-    const interval = setInterval(() => {
-      const nextIndex = (activeIndex + 1) % IMAGES.length;
-
-      scrollViewRef.current.scrollToIndex({
-        index: nextIndex,
-        animated: true,
-      });
-
-      setActiveIndex(nextIndex);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [activeIndex]);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}  contentContainerStyle={{ paddingBottom: 120 }}>
-      <View style={styles.content}>
-        <Text style={styles.greetingTitle}>Olá!</Text>
-        <Text style={styles.greetingSubtitle}>Como está seu dia?</Text>
-
-        <View style={styles.chatArea}>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
-              placeholder="O que tá rolando?..."
-              placeholderTextColor="#f0f0f0"
-            />
-            <TouchableOpacity style={styles.sendButton}>
-              <Text style={styles.sendIcon}>ᐳ</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.userBubble}>
-            <Text style={styles.userBubbleText}>
-              Hoje eu estava muito cansada! 😩
-            </Text>
-          </View>
+    <ScrollView 
+      style={styles.container} 
+      showsVerticalScrollIndicator={false} 
+      contentContainerStyle={{ paddingBottom: 100 }}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Olá!</Text>
+        <Text style={styles.subGreeting}>Como está seu dia?</Text>
+        
+        {/* Search Input */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="O que tá rolando?..."
+            placeholderTextColor="#fff"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <TouchableOpacity style={styles.searchButton}>
+            <Text style={styles.searchButtonText}>→</Text>
+          </TouchableOpacity>
         </View>
+      </View>
 
-        <View style={styles.featuredImageArea}>
-          <FlatList
+      <View style={styles.content}>
+        {/* Carousel */}
+        <View style={styles.carouselSection}>
+          <ScrollView
             ref={scrollViewRef}
-            data={IMAGES}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(_, index) => index.toString()}
-            getItemLayout={(_, index) => ({
-              length: width - 40,
-              offset: (width - 40) * index,
-              index,
-            })}
             onMomentumScrollEnd={(e) => {
               const index = Math.round(
                 e.nativeEvent.contentOffset.x / (width - 40)
               );
               setActiveIndex(index);
             }}
-            renderItem={({ item }) => (
-              <Image
-                source={item}
-                style={{
-                  width: width - 40,
-                  height: 180,
-                  borderRadius: 10,
-                }}
-                resizeMode="cover"
-              />
-            )}
-          />
-
-          <View style={styles.dotsContainer}>
-            {IMAGES.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  index === activeIndex && styles.dotActive,
-                ]}
-              />
+            contentContainerStyle={styles.carouselContent}
+          >
+            {IMAGES.map((item, index) => (
+              <View key={index} style={styles.carouselItem}>
+                <Image
+                  source={item}
+                  style={styles.carouselImage}
+                />
+              </View>
             ))}
-          </View>
+          </ScrollView>
         </View>
 
-        <Text style={styles.categoriesTitle}>Categorias</Text>
-
-        <View style={styles.categoriesGrid}>
-          {CATEGORIES.map((item, index) => (
-            <CategoryItem key={index} {...item} />
-          ))}
+        {/* Categories Section */}
+        <View style={styles.categoriesSection}>
+          <Text style={styles.categoriesTitle}>Categorias</Text>
+          <View style={styles.categoriesGrid}>
+            {CATEGORIES.map((item, index) => (
+              <CategoryItem key={index} {...item} />
+            ))}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -180,122 +165,148 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F8F9FA",
+  },
+  
+  // Header
+  header: {
     backgroundColor: "#fff",
-  },
-  content: {
-    paddingHorizontal: 20,
     paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
-
-  greetingTitle: {
+  greeting: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
+    color: "#1A1A1A",
+    marginBottom: 4,
   },
-  greetingSubtitle: {
-    fontSize: 18,
-    color: "#666",
+  subGreeting: {
+    fontSize: 15,
+    color: "#777",
     marginBottom: 20,
+    fontWeight: "400",
   },
-
-  chatArea: {
-    marginBottom: 30,
-  },
-  inputRow: {
+  
+  // Search
+  searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
   },
-  input: {
+  searchInput: {
     flex: 1,
-    height: 48,
-    backgroundColor: "#F28C8C",
-    borderRadius: 24,
-    paddingHorizontal: 15,
-    marginRight: 10,
-    fontSize: 16,
+    height: 50,
+    backgroundColor: "#FF7A8A",
+    borderRadius: 25,
+    paddingHorizontal: 20,
     color: "#fff",
+    fontSize: 15,
+    marginRight: 10,
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  sendButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: "#F28C8C",
-    borderRadius: 24,
+  searchButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#FF7A8A",
+    borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  sendIcon: {
+  searchButtonText: {
     color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    transform: [{ rotate: "-45deg" }],
-  },
-
-  userBubble: {
-    backgroundColor: "#FCE4EC",
-    borderRadius: 20,
-    borderTopLeftRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    maxWidth: "80%",
-  },
-  userBubbleText: {
-    fontSize: 14,
-    color: "#333",
-  },
-
-  featuredImageArea: {
-    height: 180,
-    borderRadius: 10,
-    marginBottom: 30,
-    overflow: "hidden",
-  },
-
-  dotsContainer: {
-    position: "absolute",
-    bottom: 10,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#aaa",
-    marginHorizontal: 4,
-  },
-  dotActive: {
-    backgroundColor: "#333",
-  },
-
-  categoriesTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 15,
-    color: "#333",
+  },
+
+  content: {
+    paddingHorizontal: 20,
+  },
+
+  // Carousel
+  carouselSection: {
+    marginVertical: 25,
+    height: 180,
+  },
+  carouselContent: {
+    paddingRight: 0,
+  },
+  carouselItem: {
+    width: width - 40,
+    height: 180,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: "#E8E8E8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  carouselImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+
+  // Categories
+  categoriesSection: {
+    marginBottom: 25,
+  },
+  categoriesTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1A1A1A",
+    marginBottom: 18,
+    letterSpacing: 0.3,
   },
   categoriesGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  squareCardContainer: {
-    width: "48%",
-    height: 120,
-    backgroundColor: "#E8F5E9",
-    borderRadius: 15,
-    alignItems: "center",
+  categoryCard: {
+    width: (width - 55) / 3,
+    height: 110,
+    borderRadius: 18,
     justifyContent: "center",
-    marginBottom: 20,
-    elevation: 3,
+    alignItems: "center",
+    marginBottom: 15,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.5)",
   },
-  squareCardIcon: {
-    fontSize: 40,
-    marginBottom: 5,
+  categoryIcon: {
+    fontSize: 36,
+    marginBottom: 8,
   },
-  squareCardText: {
-    fontSize: 14,
+  categoryName: {
+    fontSize: 11,
+    color: "#2C2C2C",
+    textAlign: "center",
     fontWeight: "600",
+    letterSpacing: 0.2,
   },
 });
