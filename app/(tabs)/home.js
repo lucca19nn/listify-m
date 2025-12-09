@@ -38,7 +38,7 @@ const CATEGORIES = [
     name: "Maquiagem",
     icon: "💄",
     color: "#C8E6C9",
-    route: "/listProdutos",
+    route: "/listMaquiagem",
   },
   {
     name: "Perfumes",
@@ -50,7 +50,7 @@ const CATEGORIES = [
     name: "Mercado",
     icon: "🛒",
     color: "#C8E6C9",
-    route: "/listProdutos",
+    route: "/listMercado",
   },
   {
     name: "Produtos de limpeza",
