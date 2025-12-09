@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useRouter } from "expo-router"; // Adicionei o useRouter
@@ -48,7 +49,11 @@ export default function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.emoji}>🔐</Text>
+        <Image 
+          source={require("../../assets/listify.png")} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.title}>Bem-vindo!</Text>
         <Text style={styles.subtitle}>Faça login para continuar</Text>
 
@@ -105,24 +110,26 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
     justifyContent: "center",
     padding: 20,
   },
-  emoji: {
-    fontSize: 60,
-    textAlign: "center",
-    marginBottom: 20,
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 34,
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginBottom: 8,
     textAlign: "center",
+    letterSpacing: 0.3,
   },
   subtitle: {
     fontSize: 16,
@@ -132,44 +139,55 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 15,
+    borderRadius: 25,
+    padding: 18,
     marginBottom: 15,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
+    borderWidth: 2,
+    borderColor: "#FF7A8A",
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   button: {
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: "#FF7A8A",
+    borderRadius: 25,
+    padding: 18,
     alignItems: "center",
     marginTop: 10,
-    minHeight: 50,
+    minHeight: 56,
     justifyContent: "center",
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   registerContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 25,
     alignItems: "center",
   },
   registerText: {
     color: "#666",
-    fontSize: 14,
+    fontSize: 15,
   },
   registerLink: {
-    color: "#007AFF",
-    fontSize: 14,
-    fontWeight: "bold",
+    color: "#FF7A8A",
+    fontSize: 15,
+    fontWeight: "700",
   },
   infoText: {
     marginTop: 30,
