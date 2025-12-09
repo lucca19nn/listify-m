@@ -14,43 +14,43 @@ import { useRouter } from "expo-router";
 const DATA = [
     {
         id: "1",
-        name: "Detergente",
-        price: "6,00",
-        image: "https://cdn.awsli.com.br/600x1000/446/446822/produto/19375032/b55beb3d542c24fecee441c2adae4c16-1enuxj82ng.jpg",
+        name: "Arroz 5kg",
+        price: "22,90",
+        image: "https://www.estadao.com.br/resizer/v2/JDTYGBFAOVHYLDWGPVWTK5XTVU.jpg?quality=80&auth=a1e80f5fd2e4df3efa7bafe32e15929b88b34c90feb4e9502f9bd78c02c5fea6&width=720&height=503&smart=true",
     },
     {
         id: "2",
-        name: "Desinfetante",
-        price: "10,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgDfCDX6FJjN_xvhXzRSk8BV7xYj8NxX0lWA&s",
+        name: "Feijão 1kg",
+        price: "8,50",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH0cD8qWEXdJZPJ5zUW0YqaQI9xVs7xCGhjA&s",
     },
     {
         id: "3",
-        name: "Sabão em pó",
-        price: "18,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqnF5oqJY8BrqQjN_g8KLh1J8KxZRLlL-Fg&s",
+        name: "Óleo de Soja",
+        price: "7,90",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQvuTTRZQKLbYx_YxQWBmRuNKCYAw_n8F2tg&s",
     },
     {
         id: "4",
-        name: "Amaciante",
-        price: "12,50",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Açúcar 1kg",
+        price: "4,50",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtVVKSzC17lOqCCYf8rZmGfQSQZHH7LNPz1Q&s",
     },
     {
         id: "5",
-        name: "Esponja",
-        price: "3,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Café 500g",
+        price: "15,90",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOo_CsQz6fN3U6Zf8wJ_9Nh1NbZRcMON5wMw&s",
     },
     {
         id: "6",
-        name: "Água Sanitária",
-        price: "8,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Macarrão 500g",
+        price: "3,90",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXvh2xWo3hBq8PJhJrH2xYMKHvMvqJ8K9rBg&s",
     },
 ];
 
-export default function ListProdutos() {
+export default function ListMercado() {
     const [search, setSearch] = useState("");
     const router = useRouter();
 
@@ -60,7 +60,7 @@ export default function ListProdutos() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Produtos de Limpeza</Text>
+                <Text style={styles.title}>Mercado</Text>
                 <View style={styles.backButton} />
             </View>
 
@@ -92,6 +92,7 @@ export default function ListProdutos() {
                         </TouchableOpacity>
                     </View>
                 )}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: { 
-        fontSize: 20, 
+        fontSize: 24, 
         fontWeight: "bold",
         color: "#1A1A1A",
     },
@@ -160,7 +161,9 @@ const styles = StyleSheet.create({
         marginRight: 15,
         backgroundColor: "#f0f0f0",
     },
-    info: { flex: 1 },
+    info: { 
+        flex: 1 
+    },
     name: { 
         fontWeight: "600",
         fontSize: 16,
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
-    addText: { 
+    addText: {
         fontSize: 20,
         fontWeight: "bold",
         color: "#2C2C2C",

@@ -9,41 +9,68 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const DATA = [
     {
         id: "1",
-        name: "Faca",
-        price: "30,00",
+        name: "Faca de Cozinha",
+        price: "35,00",
         image: "https://m.media-amazon.com/images/I/7112Ze-L08L._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "2",
-        name: "Panela",
-        price: "120,00",
-        image: "https://m.media-amazon.com/images/I/7112Ze-L08L._AC_UF894,1000_QL80_.jpg",
+        name: "Panela Grande",
+        price: "150,00",
+        image: "https://m.media-amazon.com/images/I/71FjZRJSbVL._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "3",
-        name: "Colher",
-        price: "15,00",
-        image: "https://m.media-amazon.com/images/I/7112Ze-L08L._AC_UF894,1000_QL80_.jpg",
+        name: "Colher de Pau",
+        price: "18,00",
+        image: "https://m.media-amazon.com/images/I/51nMxGTCnPL._AC_UF894,1000_QL80_.jpg",
+    },
+    {
+        id: "4",
+        name: "Tábua de Corte",
+        price: "45,00",
+        image: "https://m.media-amazon.com/images/I/71nX7VwS7nL._AC_UF894,1000_QL80_.jpg",
+    },
+    {
+        id: "5",
+        name: "Espátula",
+        price: "22,00",
+        image: "https://m.media-amazon.com/images/I/51-f3aw1PwL._AC_UF894,1000_QL80_.jpg",
+    },
+    {
+        id: "6",
+        name: "Jogo de Tigelas",
+        price: "89,00",
+        image: "https://m.media-amazon.com/images/I/71H9G5wYNrL._AC_UF894,1000_QL80_.jpg",
     },
 ];
 
 export default function ListUtensilios() {
     const [search, setSearch] = useState("");
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Utensílios</Text>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                </TouchableOpacity>
+                <Text style={styles.title}>Utensílios de Cozinha</Text>
+                <View style={styles.backButton} />
+            </View>
 
             <View style={styles.searchContainer}>
                 <TextInput
-                    placeholder="Pesquisar produto..."
+                    placeholder="Pesquisar utensílio..."
                     style={styles.searchInput}
                     value={search}
                     onChangeText={setSearch}
+                    placeholderTextColor="#fff"
                 />
                 <Ionicons name="search" size={18} color="#fff" />
             </View>
@@ -71,36 +98,96 @@ export default function ListUtensilios() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-    title: { fontSize: 20, fontWeight: "bold", marginBottom: 15 },
-    searchContainer: {
+    container: { 
+        flex: 1, 
+        padding: 20, 
+        backgroundColor: "#F8F9FA",
+        paddingTop: 50,
+    },
+    header: {
         flexDirection: "row",
-        backgroundColor: "#F28C8C",
-        borderRadius: 25,
-        paddingHorizontal: 15,
         alignItems: "center",
+        justifyContent: "space-between",
         marginBottom: 20,
     },
-    searchInput: { flex: 1, height: 45, color: "#fff" },
+    backButton: {
+        width: 40,
+        height: 40,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    title: { 
+        fontSize: 20, 
+        fontWeight: "bold",
+        color: "#1A1A1A",
+    },
+    searchContainer: {
+        flexDirection: "row",
+        backgroundColor: "#FF7A8A",
+        borderRadius: 25,
+        paddingHorizontal: 20,
+        alignItems: "center",
+        marginBottom: 20,
+        shadowColor: "#FF7A8A",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 5,
+    },
+    searchInput: { 
+        flex: 1, 
+        height: 50, 
+        color: "#fff",
+        fontSize: 15,
+    },
     card: {
         flexDirection: "row",
-        backgroundColor: "#CFF3E4",
-        borderRadius: 15,
-        padding: 12,
+        backgroundColor: "#fff",
+        borderRadius: 18,
+        padding: 15,
         alignItems: "center",
-        marginBottom: 12,
+        marginBottom: 15,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
     },
-    image: { width: 45, height: 45, marginRight: 12 },
+    image: { 
+        width: 60, 
+        height: 60, 
+        borderRadius: 12,
+        marginRight: 15,
+        backgroundColor: "#f0f0f0",
+    },
     info: { flex: 1 },
-    name: { fontWeight: "600" },
-    price: { color: "#7FBF9A" },
-    addButton: {
-        width: 28,
-        height: 28,
-        backgroundColor: "#9AD7B5",
-        borderRadius: 6,
-        alignItems: "center",
-        justifyContent: "center",
+    name: { 
+        fontWeight: "600",
+        fontSize: 16,
+        color: "#1A1A1A",
+        marginBottom: 4,
     },
-    addText: { color: "#fff", fontWeight: "bold" },
+    price: { 
+        color: "#FF7A8A",
+        fontSize: 15,
+        fontWeight: "600",
+    },
+    addButton: {
+        width: 36,
+        height: 36,
+        backgroundColor: "#C8E6C9",
+        borderRadius: 18,
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    addText: { 
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#2C2C2C",
+    },
 });

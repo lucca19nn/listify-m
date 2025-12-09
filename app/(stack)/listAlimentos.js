@@ -8,62 +8,71 @@ import {
     Image,
     TouchableOpacity,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const DATA = [
     {
         id: "1",
         name: "Morango",
-        price: "R$ 12,00",
+        price: "12,00",
         image: "https://cdn-icons-png.flaticon.com/512/590/590685.png",
     },
     {
         id: "2",
         name: "Limão",
-        price: "R$ 12,00",
+        price: "8,00",
         image: "https://cdn-icons-png.flaticon.com/512/415/415733.png",
     },
     {
         id: "3",
         name: "Manga",
-        price: "R$ 12,00",
+        price: "15,00",
         image: "https://cdn-icons-png.flaticon.com/512/2909/2909761.png",
     },
     {
         id: "4",
         name: "Maçã",
-        price: "R$ 12,00",
+        price: "10,00",
         image: "https://cdn-icons-png.flaticon.com/512/415/415682.png",
     },
     {
         id: "5",
         name: "Abacaxi",
-        price: "R$ 12,00",
+        price: "6,00",
         image: "https://cdn-icons-png.flaticon.com/512/415/415733.png",
     },
     {
         id: "6",
         name: "Banana",
-        price: "R$ 12,00",
+        price: "5,00",
         image: "https://cdn-icons-png.flaticon.com/512/2909/2909770.png",
     },
 ];
 
-export default function Checklist() {
+export default function ListAlimentos() {
     const [search, setSearch] = useState("");
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>CheckList</Text>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                </TouchableOpacity>
+                <Text style={styles.title}>Frutas</Text>
+                <View style={styles.backButton} />
+            </View>
 
-            <View style={styles.searchBox}>
+            <View style={styles.searchContainer}>
                 <TextInput
-                    placeholder="Pesquisar produto..."
+                    placeholder="Pesquisar fruta..."
                     placeholderTextColor="#fff"
-                    style={styles.input}
+                    style={styles.searchInput}
                     value={search}
                     onChangeText={setSearch}
                 />
-                <Text style={styles.searchIcon}>🔍</Text>
+                <Ionicons name="search" size={18} color="#fff" />
             </View>
 
             <FlatList

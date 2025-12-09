@@ -14,43 +14,43 @@ import { useRouter } from "expo-router";
 const DATA = [
     {
         id: "1",
-        name: "Detergente",
-        price: "6,00",
-        image: "https://cdn.awsli.com.br/600x1000/446/446822/produto/19375032/b55beb3d542c24fecee441c2adae4c16-1enuxj82ng.jpg",
+        name: "Base Líquida",
+        price: "45,90",
+        image: "https://m.media-amazon.com/images/I/41Z3EqZNfCL._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "2",
-        name: "Desinfetante",
-        price: "10,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgDfCDX6FJjN_xvhXzRSk8BV7xYj8NxX0lWA&s",
+        name: "Batom Matte",
+        price: "28,00",
+        image: "https://m.media-amazon.com/images/I/51-WxJxO5VL._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "3",
-        name: "Sabão em pó",
-        price: "18,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqnF5oqJY8BrqQjN_g8KLh1J8KxZRLlL-Fg&s",
+        name: "Paleta de Sombras",
+        price: "89,90",
+        image: "https://m.media-amazon.com/images/I/71Z9Q4qJ5cL._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "4",
-        name: "Amaciante",
-        price: "12,50",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Máscara de Cílios",
+        price: "35,00",
+        image: "https://m.media-amazon.com/images/I/51xBLGNzV3L._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "5",
-        name: "Esponja",
-        price: "3,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Blush",
+        price: "32,50",
+        image: "https://m.media-amazon.com/images/I/51LK6sZ8OiL._AC_UF894,1000_QL80_.jpg",
     },
     {
         id: "6",
-        name: "Água Sanitária",
-        price: "8,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        name: "Delineador",
+        price: "22,90",
+        image: "https://m.media-amazon.com/images/I/41QZ6n4qTHL._AC_UF894,1000_QL80_.jpg",
     },
 ];
 
-export default function ListProdutos() {
+export default function ListMaquiagem() {
     const [search, setSearch] = useState("");
     const router = useRouter();
 
@@ -60,13 +60,13 @@ export default function ListProdutos() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Produtos de Limpeza</Text>
+                <Text style={styles.title}>Maquiagem</Text>
                 <View style={styles.backButton} />
             </View>
 
             <View style={styles.searchContainer}>
                 <TextInput
-                    placeholder="Pesquisar produto..."
+                    placeholder="Pesquisar maquiagem..."
                     style={styles.searchInput}
                     value={search}
                     onChangeText={setSearch}
@@ -92,6 +92,7 @@ export default function ListProdutos() {
                         </TouchableOpacity>
                     </View>
                 )}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: { 
-        fontSize: 20, 
+        fontSize: 24, 
         fontWeight: "bold",
         color: "#1A1A1A",
     },
@@ -160,7 +161,9 @@ const styles = StyleSheet.create({
         marginRight: 15,
         backgroundColor: "#f0f0f0",
     },
-    info: { flex: 1 },
+    info: { 
+        flex: 1 
+    },
     name: { 
         fontWeight: "600",
         fontSize: 16,
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
-    addText: { 
+    addText: {
         fontSize: 20,
         fontWeight: "bold",
         color: "#2C2C2C",
