@@ -44,7 +44,7 @@ const CATEGORIES = [
     name: "Perfumes",
     icon: "🧴",
     color: "#C8E6C9",
-    route: "/listAlimentos",
+    route: "/listPerfumes",
   },
   {
     name: "Mercado",
