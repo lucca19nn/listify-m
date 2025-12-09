@@ -10,6 +10,7 @@ import {
   Platform,
   ActivityIndicator,
   ScrollView,
+  Image,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "expo-router";
@@ -73,7 +74,11 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.content}>
-          <Text style={styles.emoji}>✨</Text>
+          <Image 
+            source={require("../../assets/listify.png")} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
           <Text style={styles.title}>Criar Conta</Text>
           <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
 
@@ -145,7 +150,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   scrollContent: {
     flexGrow: 1,
@@ -157,17 +162,19 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 40,
   },
-  emoji: {
-    fontSize: 60,
-    textAlign: "center",
-    marginBottom: 20,
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 34,
+    fontWeight: "700",
+    color: "#1A1A1A",
     marginBottom: 8,
     textAlign: "center",
+    letterSpacing: 0.3,
   },
   subtitle: {
     fontSize: 16,
@@ -177,29 +184,40 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 15,
+    borderRadius: 25,
+    padding: 18,
     marginBottom: 15,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
+    borderWidth: 2,
+    borderColor: "#FF7A8A",
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   button: {
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: "#FF7A8A",
+    borderRadius: 25,
+    padding: 18,
     alignItems: "center",
     marginTop: 10,
-    minHeight: 50,
+    minHeight: 56,
     justifyContent: "center",
+    shadowColor: "#FF7A8A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   backButton: {
     marginTop: 20,
@@ -207,8 +225,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backText: {
-    color: "#007AFF",
-    fontSize: 14,
-    fontWeight: "bold",
+    color: "#FF7A8A",
+    fontSize: 15,
+    fontWeight: "700",
   },
 });
