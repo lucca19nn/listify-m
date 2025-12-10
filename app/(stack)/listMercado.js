@@ -16,37 +16,37 @@ const DATA = [
         id: "1",
         name: "Arroz 5kg",
         price: "22,90",
-        image: "https://www.estadao.com.br/resizer/v2/JDTYGBFAOVHYLDWGPVWTK5XTVU.jpg?quality=80&auth=a1e80f5fd2e4df3efa7bafe32e15929b88b34c90feb4e9502f9bd78c02c5fea6&width=720&height=503&smart=true",
+        image: "https://i.pinimg.com/736x/66/f3/9d/66f39d41fdcf22326bdfc4ea917af6f8.jpg",
     },
     {
         id: "2",
         name: "Feijão 1kg",
         price: "8,50",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH0cD8qWEXdJZPJ5zUW0YqaQI9xVs7xCGhjA&s",
+        image: "https://i.pinimg.com/736x/3a/a5/1f/3aa51f603a075bba81d188a6c5167fca.jpg",
     },
     {
         id: "3",
         name: "Óleo de Soja",
         price: "7,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQvuTTRZQKLbYx_YxQWBmRuNKCYAw_n8F2tg&s",
+        image: "https://http2.mlstatic.com/D_Q_NP_715613-MLA96501566885_102025-B.webp",
     },
     {
         id: "4",
         name: "Açúcar 1kg",
         price: "4,50",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtVVKSzC17lOqCCYf8rZmGfQSQZHH7LNPz1Q&s",
+        image: "https://i.pinimg.com/736x/23/3b/52/233b527562bf646872a69cccc066058b.jpg",
     },
     {
         id: "5",
         name: "Café 500g",
         price: "15,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOo_CsQz6fN3U6Zf8wJ_9Nh1NbZRcMON5wMw&s",
+        image: "https://i.pinimg.com/736x/ad/59/56/ad59561df4feac9753351a4b0f57dbf3.jpg",
     },
     {
         id: "6",
         name: "Macarrão 500g",
         price: "3,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXvh2xWo3hBq8PJhJrH2xYMKHvMvqJ8K9rBg&s",
+        image: "https://i.pinimg.com/736x/ae/85/11/ae8511457c4604707ea8ea47784723ab.jpg",
     },
 ];
 

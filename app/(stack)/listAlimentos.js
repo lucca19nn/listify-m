@@ -22,13 +22,13 @@ const DATA = [
         id: "2",
         name: "Limão",
         price: "8,00",
-        image: "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+        image: "https://i.pinimgproxy.com/?url=aHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS8yNTYvNTQwMi81NDAyMTkxLnBuZw==&ts=1765401276&sig=43b1f1f2dfa04237d0dc58055b1fc5cc264ed4de770ff0dcad14af946875a02e",
     },
     {
         id: "3",
         name: "Manga",
         price: "15,00",
-        image: "https://cdn-icons-png.flaticon.com/512/2909/2909761.png",
+        image: "https://i.pinimgproxy.com/?url=aHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS8yNTYvMzEzNy8zMTM3MTUyLnBuZw==&ts=1765401608&sig=d7470f5aa54cd888dc728dde5d9434165ea6dbd2c3ff1ce944fe0ce0100123f2",
     },
     {
         id: "4",
@@ -40,13 +40,13 @@ const DATA = [
         id: "5",
         name: "Abacaxi",
         price: "6,00",
-        image: "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+        image: "https://i.pinimgproxy.com/?url=aHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS8yNTYvMzE1MS8zMTUxMTIxLnBuZw==&ts=1765401716&sig=76cc29676fbac46fe6f46e47586d0da9baae66ee978c7141056242c21efdf64e",
     },
     {
         id: "6",
         name: "Banana",
         price: "5,00",
-        image: "https://cdn-icons-png.flaticon.com/512/2909/2909770.png",
+        image: "https://cdn-icons-png.flaticon.com/512/2909/2909761.png",
     },
 ];
 

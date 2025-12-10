@@ -16,37 +16,37 @@ const DATA = [
         id: "1",
         name: "Detergente",
         price: "6,00",
-        image: "https://cdn.awsli.com.br/600x1000/446/446822/produto/19375032/b55beb3d542c24fecee441c2adae4c16-1enuxj82ng.jpg",
+        image: "https://i.pinimg.com/736x/d3/ad/54/d3ad549a88fb96170887856fa1281c0e.jpg",
     },
     {
         id: "2",
         name: "Desinfetante",
         price: "10,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgDfCDX6FJjN_xvhXzRSk8BV7xYj8NxX0lWA&s",
+        image: "https://i.pinimg.com/736x/8b/18/d0/8b18d0c254f1afe63975d28f2bc22b60.jpg",
     },
     {
         id: "3",
         name: "Sabão em pó",
         price: "18,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqnF5oqJY8BrqQjN_g8KLh1J8KxZRLlL-Fg&s",
+        image: "https://i.pinimg.com/736x/e7/46/b9/e746b9dcc1a8c3db9c46a82e6766222b.jpg",
     },
     {
         id: "4",
         name: "Amaciante",
         price: "12,50",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        image: "https://i.pinimg.com/736x/a4/63/c7/a463c77a0b2a53a2ce24b147de30a33a.jpg",
     },
     {
         id: "5",
         name: "Esponja",
         price: "3,90",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        image: "https://i.pinimg.com/736x/32/97/6b/32976b4830007e54eef427ad9bb6a9f1.jpg",
     },
     {
         id: "6",
         name: "Água Sanitária",
         price: "8,00",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6H8Xj6vH5fZGJjN_xY8BV7xYj8NxX0lWA&s",
+        image: "https://i.pinimg.com/736x/9b/fe/f5/9bfef5a35ba291dadd563474c1e474ca.jpg",
     },
 ];
 
