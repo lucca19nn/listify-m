@@ -22,31 +22,31 @@ const DATA = [
         id: "2",
         name: "Panela Grande",
         price: "150,00",
-        image: "https://m.media-amazon.com/images/I/71FjZRJSbVL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/91/40/4d/91404db705be298e67cb518c7c98746f.jpg",
     },
     {
         id: "3",
         name: "Colher de Pau",
         price: "18,00",
-        image: "https://m.media-amazon.com/images/I/51nMxGTCnPL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/21/f2/43/21f2437897cdb306a495d2d75d208a6e.jpg",
     },
     {
         id: "4",
         name: "Tábua de Corte",
         price: "45,00",
-        image: "https://m.media-amazon.com/images/I/71nX7VwS7nL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/8a/09/37/8a09371db6f3b8407fe391a2afced599.jpg",
     },
     {
         id: "5",
         name: "Espátula",
         price: "22,00",
-        image: "https://m.media-amazon.com/images/I/51-f3aw1PwL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/f6/db/cb/f6dbcb7ae24793659976b3c06381cf0c.jpg",
     },
     {
         id: "6",
         name: "Jogo de Tigelas",
-        price: "89,00",
-        image: "https://m.media-amazon.com/images/I/71H9G5wYNrL._AC_UF894,1000_QL80_.jpg",
+        price: "59,00",
+        image: "https://i.pinimg.com/736x/f2/fb/d5/f2fbd55b13a3019a53475e41996ed4d0.jpg",
     },
 ];
 

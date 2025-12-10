@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  FlatList,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -35,18 +37,6 @@ const CATEGORIES = [
     route: "/listUtensilios",
   },
   {
-    name: "Maquiagem",
-    icon: "💄",
-    color: "#C8E6C9",
-    route: "/listMaquiagem",
-  },
-  {
-    name: "Perfumes",
-    icon: "🧴",
-    color: "#C8E6C9",
-    route: "/listPerfumes",
-  },
-  {
     name: "Mercado",
     icon: "🛒",
     color: "#C8E6C9",
@@ -60,10 +50,8 @@ const CATEGORIES = [
   },
 ];
 
-
 const CategoryItem = ({ name, icon, route, color }) => {
   const router = useRouter();
-
   return (
     <TouchableOpacity
       style={[styles.categoryCard, { backgroundColor: color }]}
@@ -76,10 +64,10 @@ const CategoryItem = ({ name, icon, route, color }) => {
   );
 };
 
-export default function HomeScreen() {
+export default function Home() {
   const router = useRouter();
-  const [activeIndex, setActiveIndex] = useState(0);
   const [searchText, setSearchText] = useState("");
+  const [reflections, setReflections] = useState([]);
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -89,24 +77,41 @@ export default function HomeScreen() {
         router.replace("/(stack)/quote");
       }
     };
-
     checkVisitedQuote();
+    loadReflections();
   }, []);
 
+  const loadReflections = async () => {
+    try {
+      const value = await AsyncStorage.getItem("userReflections");
+      if (value) {
+        setReflections(JSON.parse(value));
+      }
+    } catch (err) {}
+  };
 
+  const saveReflection = async () => {
+    if (!searchText.trim()) return;
+    const newReflection = { text: searchText, date: new Date().toISOString() };
+    const newList = [newReflection, ...reflections];
+    try {
+      await AsyncStorage.setItem("userReflections", JSON.stringify(newList));
+      setReflections(newList);
+      setSearchText("");
+    } catch (err) {}
+  };
 
   return (
-    <ScrollView 
-      style={styles.container} 
-      showsVerticalScrollIndicator={false} 
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>Olá!</Text>
         <Text style={styles.subGreeting}>Como está seu dia?</Text>
-        
-        {/* Search Input */}
+
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -115,12 +120,30 @@ export default function HomeScreen() {
             value={searchText}
             onChangeText={setSearchText}
           />
-          <TouchableOpacity style={styles.searchButton}>
-            <Text style={styles.searchButtonText}>→</Text>
+          <TouchableOpacity style={styles.searchButton} onPress={saveReflection}>
+            <MaterialCommunityIcons name="send" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
+
+        {/* Mostra reflexões salvas em lista */}
+        {reflections.length > 0 && (
+          <View style={styles.reflectionBox}>
+            <Text style={styles.title}>Suas Reflexões</Text>
+            {reflections.map((item, idx) => (
+              <View style={styles.reflectionItem} key={idx}>
+                <Text style={{ color: "#333" }}>{item.text}</Text>
+                {item.date && (
+                  <Text style={{ fontSize: 10, color: "#999" }}>
+                    {new Date(item.date).toLocaleString()}
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
       </View>
 
+      {/* Carrossel, categorias, etc… */}
       <View style={styles.content}>
         {/* Carousel */}
         <View style={styles.carouselSection}>
@@ -129,12 +152,6 @@ export default function HomeScreen() {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(e) => {
-              const index = Math.round(
-                e.nativeEvent.contentOffset.x / (width - 40)
-              );
-              setActiveIndex(index);
-            }}
             contentContainerStyle={styles.carouselContent}
           >
             {IMAGES.map((item, index) => (
@@ -142,6 +159,7 @@ export default function HomeScreen() {
                 <Image
                   source={item}
                   style={styles.carouselImage}
+                  resizeMode="cover"
                 />
               </View>
             ))}
@@ -167,8 +185,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8F9FA",
   },
-  
-  // Header
   header: {
     backgroundColor: "#fff",
     paddingTop: 50,
@@ -192,8 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "400",
   },
-  
-  // Search
+
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -203,7 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     backgroundColor: "#FF7A8A",
-    borderRadius: 25,
+    borderRadius: 15,
     paddingHorizontal: 20,
     color: "#fff",
     fontSize: 15,
@@ -218,7 +233,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     backgroundColor: "#FF7A8A",
-    borderRadius: 25,
+    borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#FF7A8A",
@@ -227,12 +242,33 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
-  searchButtonText: {
-    color: "#fff",
-    fontSize: 20,
+
+  // Reflexão mostrada
+  reflectionBox: {
+    marginTop: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 15,
     fontWeight: "bold",
+    marginBottom: 5,
+    color: "#1A1A1A",
+  },
+  reflectionItem: {
+    backgroundColor: "#F8F9FA",
+    padding: 8,
+    borderRadius: 6,
+    marginBottom: 6,
   },
 
+  // Conteúdo abaixo do header
   content: {
     paddingHorizontal: 20,
   },
@@ -263,7 +299,6 @@ const styles = StyleSheet.create({
   carouselImage: {
     width: "100%",
     height: "100%",
-    objectFit: "cover",
   },
 
   // Categories
