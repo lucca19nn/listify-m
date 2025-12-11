@@ -33,17 +33,17 @@ export default function ListEletro() {
             setError(null);
             const url = `${API_URL}/eletrodomesticos`;
             console.log("Tentativa", retryCount + 1, "- Buscando de:", url);
-            
+
             const response = await axios.get(url, {
                 timeout: 5000,
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
                 },
             });
-            
+
             console.log("✓ Sucesso! Status:", response.status);
-            
+
             if (Array.isArray(response.data)) {
                 console.log("✓ Response é array com", response.data.length, "itens");
                 setData(response.data);
@@ -57,10 +57,10 @@ export default function ListEletro() {
         } catch (err) {
             console.error("✗ Erro na tentativa", retryCount + 1);
             console.error("- Mensagem:", err.message);
-            
-            if (err.code === 'ECONNABORTED' && err.message.includes('timeout')) {
+
+            if (err.code === "ECONNABORTED" && err.message.includes("timeout")) {
                 setError("⏱️ Timeout - servidor demorando muito. Verifique se está rodando em " + API_URL);
-            } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+            } else if (err.code === "ECONNREFUSED" || err.message.includes("Network Error")) {
                 setError("📡 Sem conexão - servidor não está acessível em " + API_URL);
             } else if (err.response?.status === 500) {
                 setError("❌ Erro 500 no servidor");
@@ -89,6 +89,12 @@ export default function ListEletro() {
         }
     };
 
+    const filteredData = Array.isArray(data)
+        ? data.filter((item) =>
+            item && (item.nome || item.name || "").toLowerCase().includes(search.toLowerCase())
+        )
+        : [];
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Eletrodomésticos</Text>
@@ -99,31 +105,45 @@ export default function ListEletro() {
                     style={styles.searchInput}
                     value={search}
                     onChangeText={setSearch}
+                    placeholderTextColor="#fff"
                 />
                 <Ionicons name="search" size={18} color="#fff" />
             </View>
 
-            <FlatList
-                data={DATA.filter(item =>
-                    item.name.toLowerCase().includes(search.toLowerCase())
-                )}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Image source={{ uri: item.image }} style={styles.image} />
-                        <View style={styles.info}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.price}>R$ {item.price}</Text>
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#F28C8C" />
+                    <Text style={styles.loadingText}>Carregando produtos...</Text>
+                </View>
+            ) : error ? (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                    <TouchableOpacity style={styles.retryButton} onPress={fetchEletrodomesticos}>
+                        <Text style={styles.retryText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredData}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Image source={{ uri: item.imagem || item.image }} style={styles.image} />
+                            <View style={styles.info}>
+                                <Text style={styles.name}>{item.nome || item.name || "Produto"}</Text>
+                                <Text style={styles.price}>R$ {item.preco || item.price || "0.00"}</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.addButton}
+                                onPress={() => handleAdd(item)}
+                            >
+                                <Text style={styles.addText}>+</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                            style={styles.addButton}
-                            onPress={() => handleAdd(item)}
-                        >
-                            <Text style={styles.addText}>+</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-            />
+                    )}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
         </View>
     );
 }
@@ -140,6 +160,17 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     searchInput: { flex: 1, height: 45, color: "#fff" },
+    loadingContainer: { alignItems: "center", marginTop: 40 },
+    loadingText: { marginTop: 10, color: "#555" },
+    errorContainer: { alignItems: "center", marginTop: 40, paddingHorizontal: 10 },
+    errorText: { color: "#d9534f", textAlign: "center", marginBottom: 12 },
+    retryButton: {
+        backgroundColor: "#F28C8C",
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    retryText: { color: "#fff", fontWeight: "bold" },
     card: {
         flexDirection: "row",
         backgroundColor: "#CFF3E4",
