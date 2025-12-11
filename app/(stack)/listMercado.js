@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -7,52 +7,89 @@ import {
     FlatList,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
-const DATA = [
-    {
-        id: "1",
-        name: "Arroz 5kg",
-        price: "22,90",
-        image: "https://i.pinimg.com/736x/66/f3/9d/66f39d41fdcf22326bdfc4ea917af6f8.jpg",
-    },
-    {
-        id: "2",
-        name: "Feijão 1kg",
-        price: "8,50",
-        image: "https://i.pinimg.com/736x/3a/a5/1f/3aa51f603a075bba81d188a6c5167fca.jpg",
-    },
-    {
-        id: "3",
-        name: "Óleo de Soja",
-        price: "7,90",
-        image: "https://http2.mlstatic.com/D_Q_NP_715613-MLA96501566885_102025-B.webp",
-    },
-    {
-        id: "4",
-        name: "Açúcar 1kg",
-        price: "4,50",
-        image: "https://i.pinimg.com/736x/23/3b/52/233b527562bf646872a69cccc066058b.jpg",
-    },
-    {
-        id: "5",
-        name: "Café 500g",
-        price: "15,90",
-        image: "https://i.pinimg.com/736x/ad/59/56/ad59561df4feac9753351a4b0f57dbf3.jpg",
-    },
-    {
-        id: "6",
-        name: "Macarrão 500g",
-        price: "3,90",
-        image: "https://i.pinimg.com/736x/ae/85/11/ae8511457c4604707ea8ea47784723ab.jpg",
-    },
-];
+import { addItemToChecklist } from "../../utils/checklist";
+import axios from "axios";
+import API_URL from "../../config/api";
 
 export default function ListMercado() {
     const [search, setSearch] = useState("");
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
     const router = useRouter();
+
+    useEffect(() => {
+        fetchAlimentos();
+    }, []);
+
+    const fetchAlimentos = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const url = `${API_URL}/alimentos`;
+            console.log("Tentativa", retryCount + 1, "- Buscando de:", url);
+            
+            const response = await axios.get(url, {
+                timeout: 5000, 
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            console.log("✓ Sucesso! Status:", response.status);
+            console.log("Dados recebidos:", response.data);
+            
+            if (Array.isArray(response.data)) {
+                console.log("✓ Response é array com", response.data.length, "itens");
+                console.log("Primeiro item:", response.data[0]);
+                setData(response.data);
+            } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                console.log("✓ Response.data.data é array com", response.data.data.length, "itens");
+                console.log("Primeiro item:", response.data.data[0]);
+                setData(response.data.data);
+            } else {
+                console.error("✗ Dados não são um array. Tipo:", typeof response.data);
+                console.error("✗ Dados completos:", JSON.stringify(response.data));
+                setError("Formato inválido: esperado array de alimentos");
+            }
+        } catch (err) {
+            console.error("✗ Erro na tentativa", retryCount + 1);
+            console.error("- Mensagem:", err.message);
+            console.error("- Code:", err.code);
+            
+            if (err.code === 'ECONNABORTED' && err.message.includes('timeout')) {
+                setError("⏱️ Timeout - servidor demorando muito. Verifique se está rodando em " + API_URL);
+            } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+                setError("📡 Sem conexão - servidor não está acessível em " + API_URL);
+            } else if (err.response?.status === 500) {
+                setError("❌ Erro 500 no servidor");
+            } else if (err.response?.status === 404) {
+                setError("❌ Rota não encontrada (404)");
+            } else {
+                setError("❌ Erro: " + (err.message || "Desconhecido"));
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAdd = async (item) => {
+        try {
+            await addItemToChecklist({
+                ...item,
+                category: "Mercado",
+            });
+            router.push("/(tabs)/checklist");
+        } catch (error) {
+            console.error("Erro ao adicionar item ao checklist:", error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -75,25 +112,47 @@ export default function ListMercado() {
                 <Ionicons name="search" size={18} color="#fff" />
             </View>
 
-            <FlatList
-                data={DATA.filter(item =>
-                    item.name.toLowerCase().includes(search.toLowerCase())
-                )}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Image source={{ uri: item.image }} style={styles.image} />
-                        <View style={styles.info}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.price}>R$ {item.price}</Text>
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#FF7A8A" />
+                    <Text style={styles.loadingText}>Carregando produtos...</Text>
+                </View>
+            ) : error ? (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                    <TouchableOpacity style={styles.retryButton} onPress={fetchAlimentos}>
+                        <Text style={styles.retryText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : (
+                <FlatList
+                    data={Array.isArray(data) ? data.filter(item =>
+                        item && (item.nome || item.name) && (item.nome || item.name).toLowerCase().includes(search.toLowerCase())
+                    ) : []}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Image source={{ uri: item.imagem || item.image }} style={styles.image} />
+                            <View style={styles.info}>
+                                <Text style={styles.name}>{item.nome || item.name || "Produto sem nome"}</Text>
+                                <Text style={styles.price}>R$ {item.preco || item.price || "0.00"}</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.addButton}
+                                onPress={() => handleAdd({
+                                    id: item.id,
+                                    name: item.nome || item.name,
+                                    price: item.preco || item.price,
+                                    image: item.imagem || item.image,
+                                })}
+                            >
+                                <Text style={styles.addText}>+</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.addButton}>
-                            <Text style={styles.addText}>+</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                showsVerticalScrollIndicator={false}
-            />
+                    )}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
         </View>
     );
 }
@@ -192,5 +251,40 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "#2C2C2C",
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop: 50,
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: "#666",
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop: 50,
+        paddingHorizontal: 30,
+    },
+    errorText: {
+        fontSize: 16,
+        color: "#FF6B6B",
+        textAlign: "center",
+        marginBottom: 20,
+    },
+    retryButton: {
+        backgroundColor: "#FF7A8A",
+        paddingHorizontal: 30,
+        paddingVertical: 12,
+        borderRadius: 25,
+    },
+    retryText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "600",
     },
 });

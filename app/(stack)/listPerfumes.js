@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { addItemToChecklist } from "../../utils/checklist";
 
 const DATA = [
     {
@@ -54,6 +55,18 @@ export default function ListPerfumes() {
     const [search, setSearch] = useState("");
     const router = useRouter();
 
+    const handleAdd = async (item) => {
+        try {
+            await addItemToChecklist({
+                ...item,
+                category: "Perfumes",
+            });
+            router.push("/(tabs)/checklist");
+        } catch (error) {
+            console.error("Erro ao adicionar item ao checklist:", error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -87,7 +100,10 @@ export default function ListPerfumes() {
                             <Text style={styles.name}>{item.name}</Text>
                             <Text style={styles.price}>R$ {item.price}</Text>
                         </View>
-                        <TouchableOpacity style={styles.addButton}>
+                        <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={() => handleAdd(item)}
+                        >
                             <Text style={styles.addText}>+</Text>
                         </TouchableOpacity>
                     </View>

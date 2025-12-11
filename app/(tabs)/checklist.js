@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     View,
     Text,
@@ -11,18 +11,30 @@ import {
     Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; 
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ChecklistScreen() {
     const [search, setSearch] = useState("");
     const [items, setItems] = useState([]);
 
-    useEffect(() => {
-        AsyncStorage.getItem("checklistItems").then((stored) => {
-            if (stored) {
-                setItems(JSON.parse(stored));
-            }
-        });
+    const loadItems = useCallback(async () => {
+        const stored = await AsyncStorage.getItem("checklistItems");
+        if (stored) {
+            setItems(JSON.parse(stored));
+        } else {
+            setItems([]);
+        }
     }, []);
+
+    useEffect(() => {
+        loadItems();
+    }, [loadItems]);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadItems();
+        }, [loadItems])
+    );
 
     async function removeItem(id) {
         const filtered = items.filter((i) => i.id !== id);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -7,52 +7,87 @@ import {
     FlatList,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
-const DATA = [
-    {
-        id: "1",
-        name: "Detergente",
-        price: "6,00",
-        image: "https://i.pinimg.com/736x/d3/ad/54/d3ad549a88fb96170887856fa1281c0e.jpg",
-    },
-    {
-        id: "2",
-        name: "Desinfetante",
-        price: "10,00",
-        image: "https://i.pinimg.com/736x/8b/18/d0/8b18d0c254f1afe63975d28f2bc22b60.jpg",
-    },
-    {
-        id: "3",
-        name: "Sabão em pó",
-        price: "18,00",
-        image: "https://i.pinimg.com/736x/e7/46/b9/e746b9dcc1a8c3db9c46a82e6766222b.jpg",
-    },
-    {
-        id: "4",
-        name: "Amaciante",
-        price: "12,50",
-        image: "https://i.pinimg.com/736x/a4/63/c7/a463c77a0b2a53a2ce24b147de30a33a.jpg",
-    },
-    {
-        id: "5",
-        name: "Esponja",
-        price: "3,90",
-        image: "https://i.pinimg.com/736x/32/97/6b/32976b4830007e54eef427ad9bb6a9f1.jpg",
-    },
-    {
-        id: "6",
-        name: "Água Sanitária",
-        price: "8,00",
-        image: "https://i.pinimg.com/736x/9b/fe/f5/9bfef5a35ba291dadd563474c1e474ca.jpg",
-    },
-];
+import { addItemToChecklist } from "../../utils/checklist";
+import axios from "axios";
+import API_URL from "../../config/api";
 
 export default function ListProdutos() {
     const [search, setSearch] = useState("");
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
     const router = useRouter();
+
+    useEffect(() => {
+        fetchProdutos();
+    }, []);
+
+    const fetchProdutos = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const url = `${API_URL}/produtos-limpeza`;
+            console.log("Tentativa", retryCount + 1, "- Buscando de:", url);
+            
+            const response = await axios.get(url, {
+                timeout: 5000,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            console.log("✓ Sucesso! Status:", response.status);
+            
+            if (Array.isArray(response.data)) {
+                console.log("✓ Response é array com", response.data.length, "itens");
+                setData(response.data);
+            } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                console.log("✓ Response.data.data é array com", response.data.data.length, "itens");
+                setData(response.data.data);
+            } else {
+                console.error("✗ Dados não são um array. Tipo:", typeof response.data);
+                setError("Formato inválido: esperado array de produtos");
+            }
+        } catch (err) {
+            console.error("✗ Erro na tentativa", retryCount + 1);
+            console.error("- Mensagem:", err.message);
+            
+            if (err.code === 'ECONNABORTED' && err.message.includes('timeout')) {
+                setError("⏱️ Timeout - servidor demorando muito. Verifique se está rodando em " + API_URL);
+            } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+                setError("📡 Sem conexão - servidor não está acessível em " + API_URL);
+            } else if (err.response?.status === 500) {
+                setError("❌ Erro 500 no servidor");
+            } else if (err.response?.status === 404) {
+                setError("❌ Rota não encontrada (404)");
+            } else {
+                setError("❌ Erro: " + (err.message || "Desconhecido"));
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAdd = async (item) => {
+        try {
+            await addItemToChecklist({
+                id: item.id,
+                name: item.nome || item.name,
+                price: item.preco || item.price,
+                image: item.imagem || item.image,
+                category: "Limpeza",
+            });
+            router.push("/(tabs)/checklist");
+        } catch (error) {
+            console.error("Erro ao adicionar item ao checklist:", error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -75,24 +110,42 @@ export default function ListProdutos() {
                 <Ionicons name="search" size={18} color="#fff" />
             </View>
 
-            <FlatList
-                data={DATA.filter(item =>
-                    item.name.toLowerCase().includes(search.toLowerCase())
-                )}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Image source={{ uri: item.image }} style={styles.image} />
-                        <View style={styles.info}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.price}>R$ {item.price}</Text>
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#FF7A8A" />
+                    <Text style={styles.loadingText}>Carregando produtos...</Text>
+                </View>
+            ) : error ? (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                    <TouchableOpacity style={styles.retryButton} onPress={fetchProdutos}>
+                        <Text style={styles.retryText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : (
+                <FlatList
+                    data={Array.isArray(data) ? data.filter(item =>
+                        item && (item.nome || item.name) && (item.nome || item.name).toLowerCase().includes(search.toLowerCase())
+                    ) : []}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Image source={{ uri: item.imagem || item.image }} style={styles.image} />
+                            <View style={styles.info}>
+                                <Text style={styles.name}>{item.nome || item.name || "Produto sem nome"}</Text>
+                                <Text style={styles.price}>R$ {item.preco || item.price || "0.00"}</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.addButton}
+                                onPress={() => handleAdd(item)}
+                            >
+                                <Text style={styles.addText}>+</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.addButton}>
-                            <Text style={styles.addText}>+</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-            />
+                    )}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
         </View>
     );
 }
