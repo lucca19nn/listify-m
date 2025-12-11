@@ -17,37 +17,37 @@ const DATA = [
         id: "1",
         name: "Base Líquida",
         price: "45,90",
-        image: "https://m.media-amazon.com/images/I/41Z3EqZNfCL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/00/6c/d2/006cd281c756c113053c611e01b02fc8.jpg",
     },
     {
         id: "2",
         name: "Batom Matte",
         price: "28,00",
-        image: "https://m.media-amazon.com/images/I/51-WxJxO5VL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/24/f3/c6/24f3c6b383f93f44aabc48b688f48848.jpg",
     },
     {
         id: "3",
         name: "Paleta de Sombras",
         price: "89,90",
-        image: "https://m.media-amazon.com/images/I/71Z9Q4qJ5cL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/49/e5/ed/49e5ed5c8bccec04f21bbf7a8e0d8203.jpg",
     },
     {
         id: "4",
         name: "Máscara de Cílios",
         price: "35,00",
-        image: "https://m.media-amazon.com/images/I/51xBLGNzV3L._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/f4/7a/a0/f47aa0d1836a39bca8f8cb8c170325c1.jpg",
     },
     {
         id: "5",
         name: "Blush",
         price: "32,50",
-        image: "https://m.media-amazon.com/images/I/51LK6sZ8OiL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/03/79/24/037924da75d8346c319e93518eda1a76.jpg",
     },
     {
         id: "6",
         name: "Delineador",
         price: "22,90",
-        image: "https://m.media-amazon.com/images/I/41QZ6n4qTHL._AC_UF894,1000_QL80_.jpg",
+        image: "https://i.pinimg.com/736x/36/24/66/362466da4cc8d8425d977ed2be03c1d8.jpg",
     },
 ];
 
