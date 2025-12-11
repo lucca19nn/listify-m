@@ -39,7 +39,7 @@ export default function Quote() {
                 </View>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => router.push("/(tabs)/home")} // Navega para a página home.js
+                    onPress={() => router.push("/(tabs)/home")}
                 >
                     <Text style={styles.buttonText}>IR PARA HOME</Text>
                 </TouchableOpacity>

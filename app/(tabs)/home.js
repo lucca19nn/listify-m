@@ -16,69 +16,84 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
+// imagens do carrossel (mantive as suas)
 const IMAGES = [
   { uri: "https://deportesaludable.com/wp-content/uploads/2018/12/alimentos-saludables.jpg" },
-  { uri: "https://blog.novolar.com.br/wp-content/uploads/2022/04/Principais-eletrodomesticos.jpg" },
+  { uri: "https://i.pinimg.com/736x/6b/41/8b/6b418b91a26123da0ee3fcad1ad4b438.jpg" },
   { uri: "https://media.gazetadopovo.com.br/2021/08/24165607/meio01_shutterstock_1042252666-1-660x372.jpg" },
   { uri: "https://medlimp.com.br/wp-content/uploads/2021/07/produtos-de-limpeza-profissional.jpg" },
 ];
 
+// CATEGORIES agora será exibido na horizontal.
+// Todas as cores definidas para "#C8E6C9" conforme solicitado.
+// Removi verduras, padaria, embalagens e cuidados.
 const CATEGORIES = [
-  {
-    name: "Frutas",
-    icon: "🍎",
-    color: "#C8E6C9",
-    route: "/listAlimentos",
-  },
-  {
-    name: "Utensílios de cozinha",
-    icon: "🍴",
-    color: "#C8E6C9",
-    route: "/listUtensilios",
-  },
-  {
-    name: "Mercado",
-    icon: "🛒",
-    color: "#C8E6C9",
-    route: "/listMercado",
-  },
-  {
-    name: "Produtos de limpeza",
-    icon: "🧼",
-    color: "#C8E6C9",
-    route: "/listProdutos",
-  },
-  {
-    name: "Produtos eletrodomésticos",
-    icon: "🔌",
-    color: "#C8E6C9",
-    route: "/listEletro",
-  },
-  {
-    name: "Perfumes",
-    icon: "🌺",
-    color: "#C8E6C9",
-    route: "/listPerfumes",
-  },
-  {
-    name: "Maquiagem",
-    icon: "💄",
-    color: "#C8E6C9",
-    route: "/listMaquiagem",
-  },
+  { name: "Frutas", icon: "🍎", color: "#C8E6C9", route: "/listAlimentos" },
+  { name: "Utensílios", icon: "🍴", color: "#C8E6C9", route: "/listUtensilios" },
+  { name: "Mercado", icon: "🛒", color: "#C8E6C9", route: "/listMercado" },
+  { name: "Limpeza", icon: "🧼", color: "#C8E6C9", route: "/listProdutos" },
+  { name: "Eletro", icon: "🔌", color: "#C8E6C9", route: "/listEletro" },
+  { name: "Perfumes", icon: "🌺", color: "#C8E6C9", route: "/listPerfumes" },
+  { name: "Maquiagem", icon: "💄", color: "#C8E6C9", route: "/listMaquiagem" },
 ];
 
-const CategoryItem = ({ name, icon, route, color }) => {
+// FlatLists horizontais específicas (ajustadas conforme pedido):
+// - Removi "Verduras" e "Padaria" do MARKET_GROUP
+// - Removi "Embalagens" e "Cuidados"
+// - Coloquei "Limpeza" também em Perfumaria & Cosméticos
+const MARKET_GROUP = [
+  { name: "Mercado", icon: "🛒", color: "#C8E6C9", route: "/listMercado" },
+  { name: "Frutas", icon: "🍎", color: "#C8E6C9", route: "/listAlimentos" },
+];
+
+const ITEMS_GROUP = [
+  { name: "Utensílios", icon: "🍴", color: "#C8E6C9", route: "/listUtensilios" },
+  { name: "Eletrodomésticos", icon: "🔌", color: "#C8E6C9", route: "/listEletro" },
+];
+
+const PERFUMERY_GROUP = [
+  { name: "Perfumes", icon: "🌺", color: "#C8E6C9", route: "/listPerfumes" },
+  { name: "Maquiagem", icon: "💄", color: "#C8E6C9", route: "/listMaquiagem" },
+  // Limpeza adicionada aqui conforme pedido
+  { name: "Limpeza", icon: "🧼", color: "#C8E6C9", route: "/listProdutos" },
+];
+
+const CategoryItem = ({ name, icon, route, color, compact = false }) => {
   const router = useRouter();
   return (
     <TouchableOpacity
-      style={[styles.categoryCard, { backgroundColor: color }]}
+      style={[
+        compact ? styles.horizontalCard : styles.categoryCard,
+        { backgroundColor: color },
+      ]}
       onPress={() => router.push(route)}
       activeOpacity={0.8}
     >
-      <Text style={styles.categoryIcon}>{icon}</Text>
-      <Text style={styles.categoryName}>{name}</Text>
+      <Text style={compact ? styles.horizontalIcon : styles.categoryIcon}>
+        {icon}
+      </Text>
+      <Text style={compact ? styles.horizontalName : styles.categoryName}>
+        {name}
+      </Text>
     </TouchableOpacity>
+  );
+};
+
+const HorizontalSection = ({ title, data }) => {
+  if (!data || data.length === 0) return null;
+  return (
+    <View style={styles.horizontalSection}>
+      <Text style={styles.horizontalTitle}>{title}</Text>
+      <FlatList
+        data={data}
+        keyExtractor={(i) => i.name}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalList}
+        renderItem={({ item }) => <CategoryItem {...item} compact={true} />}
+        ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+      />
+    </View>
   );
 };
 
@@ -123,7 +138,7 @@ export default function Home() {
     <ScrollView
       style={styles.container}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={{ paddingBottom: 120 }}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -143,7 +158,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Mostra reflexões salvas em lista */}
         {reflections.length > 0 && (
           <View style={styles.reflectionBox}>
             <Text style={styles.title}>Suas Reflexões</Text>
@@ -161,7 +175,7 @@ export default function Home() {
         )}
       </View>
 
-      {/* Carrossel, categorias, etc… */}
+      {/* Conteúdo abaixo do header */}
       <View style={styles.content}>
         {/* Carousel */}
         <View style={styles.carouselSection}>
@@ -184,15 +198,13 @@ export default function Home() {
           </ScrollView>
         </View>
 
-        {/* Categories Section */}
-        <View style={styles.categoriesSection}>
-          <Text style={styles.categoriesTitle}>Categorias</Text>
-          <View style={styles.categoriesGrid}>
-            {CATEGORIES.map((item, index) => (
-              <CategoryItem key={index} {...item} />
-            ))}
-          </View>
-        </View>
+        {/* CATEGORIES agora em horizontal (uma FlatList horizontal maior) */}
+        <HorizontalSection title="Categorias" data={CATEGORIES} />
+
+        {/* FlatLists horizontais pedidas */}
+        <HorizontalSection title="Mercado" data={MARKET_GROUP} />
+        <HorizontalSection title="Itens" data={ITEMS_GROUP} />
+        <HorizontalSection title="Perfumaria & Cosméticos" data={PERFUMERY_GROUP} />
       </View>
     </ScrollView>
   );
@@ -207,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 50,
     paddingHorizontal: 20,
-    paddingBottom: 25,
+    paddingBottom: 18,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -223,7 +235,7 @@ const styles = StyleSheet.create({
   subGreeting: {
     fontSize: 15,
     color: "#777",
-    marginBottom: 20,
+    marginBottom: 14,
     fontWeight: "400",
   },
 
@@ -234,49 +246,44 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    height: 50,
+    height: 48,
     backgroundColor: "#FF7A8A",
-    borderRadius: 15,
-    paddingHorizontal: 20,
+    borderRadius: 14,
+    paddingHorizontal: 16,
     color: "#fff",
     fontSize: 15,
     marginRight: 10,
     shadowColor: "#FF7A8A",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 5,
   },
   searchButton: {
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     backgroundColor: "#FF7A8A",
-    borderRadius: 15,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#FF7A8A",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 5,
   },
 
-  // Reflexão mostrada
+  // Reflexões
   reflectionBox: {
     marginTop: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
   title: {
     fontSize: 15,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 6,
     color: "#1A1A1A",
   },
   reflectionItem: {
@@ -286,80 +293,94 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  // Conteúdo abaixo do header
+  // Conteúdo
   content: {
     paddingHorizontal: 20,
   },
 
   // Carousel
   carouselSection: {
-    marginVertical: 25,
-    height: 180,
+    marginVertical: 18,
+    height: 160,
   },
-  carouselContent: {
-    paddingRight: 0,
-  },
+  carouselContent: {},
   carouselItem: {
     width: width - 40,
-    height: 180,
-    borderRadius: 16,
+    height: 160,
+    borderRadius: 14,
     overflow: "hidden",
     backgroundColor: "#E8E8E8",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 0,
+    marginRight: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   carouselImage: {
     width: "100%",
     height: "100%",
   },
 
-  // Categories
-  categoriesSection: {
-    marginBottom: 25,
+  // Horizontal sections (ocupam mais linhas com cards maiores)
+  horizontalSection: {
+    marginBottom: 22,
   },
-  categoriesTitle: {
-    fontSize: 20,
+  horizontalTitle: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#1A1A1A",
-    marginBottom: 18,
-    letterSpacing: 0.3,
+    marginBottom: 12,
   },
-  categoriesGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+  horizontalList: {
+    paddingLeft: 2,
+    paddingVertical: 2,
   },
+
+  // Cartões horizontais maiores para "ocupar mais linhas"
+  horizontalCard: {
+    width: 140,
+    height: 140,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 12,
+    marginRight: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  horizontalIcon: {
+    fontSize: 40,
+    marginBottom: 8,
+  },
+  horizontalName: {
+    fontSize: 14,
+    color: "#2C2C2C",
+    textAlign: "center",
+    fontWeight: "700",
+  },
+
+  // Mantive os estilos do grid caso queira reusar depois
   categoryCard: {
     width: (width - 55) / 3,
     height: 110,
-    borderRadius: 18,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.5)",
+    marginBottom: 12,
+    padding: 10,
   },
   categoryIcon: {
-    fontSize: 36,
-    marginBottom: 8,
+    fontSize: 34,
+    marginBottom: 6,
   },
   categoryName: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#2C2C2C",
     textAlign: "center",
     fontWeight: "600",
-    letterSpacing: 0.2,
   },
 });
