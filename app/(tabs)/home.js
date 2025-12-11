@@ -48,6 +48,24 @@ const CATEGORIES = [
     color: "#C8E6C9",
     route: "/listProdutos",
   },
+  {
+    name: "Produtos eletrodomésticos",
+    icon: "🔌",
+    color: "#C8E6C9",
+    route: "/listEletro",
+  },
+  {
+    name: "Perfumes",
+    icon: "🌺",
+    color: "#C8E6C9",
+    route: "/listPerfumes",
+  },
+  {
+    name: "Maquiagem",
+    icon: "💄",
+    color: "#C8E6C9",
+    route: "/listMaquiagem",
+  },
 ];
 
 const CategoryItem = ({ name, icon, route, color }) => {
