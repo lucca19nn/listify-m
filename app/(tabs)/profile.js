@@ -25,10 +25,25 @@ export default function ProfileScreen() {
   };
 
   const menuItems = [
-    { icon: "person-outline", title: "Editar Perfil", subtitle: "Altere suas informações" },
-    { icon: "notifications-outline", title: "Notificações", subtitle: "Gerencie suas notificações" },
-    { icon: "lock-closed-outline", title: "Privacidade", subtitle: "Configurações de segurança" },
-    { icon: "help-circle-outline", title: "Ajuda", subtitle: "Central de suporte" },
+    { 
+      icon: "person-outline", 
+      title: "Editar Perfil", 
+      subtitle: "Altere suas informações" 
+    },
+    { 
+      icon: "notifications-outline", 
+      title: "Notificações", 
+      subtitle: "Gerencie suas notificações" 
+    },
+    { 
+      icon: "lock-closed-outline", 
+      title: "Privacidade", 
+      subtitle: "Configurações de segurança" 
+    },
+    { 
+      icon: "help-circle-outline", 
+      title: "Ajuda", subtitle: "Central de suporte" 
+    },
   ];
 
   return (
